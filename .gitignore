@@ -1,0 +1,26 @@
+# Secrets
+secrets/
+*.secret
+*.key
+*.pem
+talos/secrets/
+
+# Talos generated secrets/config containing credentials
+talosconfig
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Temporary files
+tmp/
+.cache/
+
+# CAD exports / temp
+*.bak
+*.autosave
+
+# Kubernetes local config
+kubeconfig
