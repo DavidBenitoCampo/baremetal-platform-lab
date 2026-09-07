@@ -2,9 +2,10 @@
 
 Operational procedures will be stored here.
 
+- [Bootstrap the Talos cluster](bootstrap-talos.md)
+
 Planned runbooks include:
 
-- Bootstrap the Talos cluster
 - Replace a failed worker
 - Recover Kubernetes access
 - Restore a workload from backup
