@@ -15,10 +15,11 @@ Goal: establish the project structure, architecture documentation, and decision 
 
 ## Milestone 1 — Single-Node Kubernetes
 
-Goal: run Kubernetes reproducibly on the Raspberry Pi 5.
+Goal: run Kubernetes reproducibly on an x86 mini PC (Raspberry Pi 5 deferred
+as the Talos target — see ADR-002).
 
 - [ ] Install NVMe storage
-- [ ] Boot Raspberry Pi 5 for Talos
+- [ ] Boot x86 mini PC for Talos
 - [ ] Generate Talos machine configuration
 - [ ] Bootstrap Kubernetes
 - [ ] Configure remote `talosctl`

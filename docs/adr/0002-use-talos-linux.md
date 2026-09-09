@@ -57,3 +57,29 @@ This decision should be revisited if:
 - Talos does not support required hardware reliably.
 - A future node must run non-Kubernetes workloads.
 - The project expands into host-level configuration experiments where NixOS provides greater learning value.
+
+## Update — 2026-09-09: First Target Changed to x86 Mini PC
+
+The Raspberry Pi 5 was the original first target named in this decision. In
+practice it hit the "hardware compatibility must be checked carefully" risk
+called out above: Talos support for the Pi 5 is community-maintained, not
+part of Talos' officially tested platform list, and current images fail to
+bring up Ethernet because the kernel lacks `CONFIG_FIRMWARE_RP1`, the driver
+for the Pi 5's RP1 southbridge chip — see
+[siderolabs/sbc-raspberrypi#23](https://github.com/siderolabs/sbc-raspberrypi/issues/23)
+and [siderolabs/overlays#77](https://github.com/siderolabs/overlays/discussions/77).
+Since Talos has no local console or SSH workflow, a node that can't reach the
+network can't be administered at all.
+
+This meets the revisit condition above without invalidating the underlying
+decision to use Talos — the fix is a hardware substitution, not a change of
+OS: Talos itself is still the right fit for the reasons already listed.
+
+**New first target: a standard x86_64 UEFI mini PC**, using Talos' plain
+Metal installer with no SBC overlay and no kernel fork. This is also the
+platform the wider Talos homelab community defaults to, for the same
+reason — it sidesteps SBC-specific hardware support gaps entirely.
+
+The Raspberry Pi 5 remains part of the project: repurposed as an
+Ubuntu + kubeadm node for CKA exam practice, and as a candidate to rejoin
+the Talos cluster later once upstream RP1 support lands.
