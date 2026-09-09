@@ -83,3 +83,27 @@ reason — it sidesteps SBC-specific hardware support gaps entirely.
 The Raspberry Pi 5 remains part of the project: repurposed as an
 Ubuntu + kubeadm node for CKA exam practice, and as a candidate to rejoin
 the Talos cluster later once upstream RP1 support lands.
+
+## Update — 2026-09-09 (revised): Pi 5 Reinstated as First Target
+
+The mini PC pivot above was based on a Raspberry Pi 5 Ethernet/boot issue
+that has since been fixed upstream: SideroLabs merged a dedicated `rpi_5`
+Image Factory profile in
+[siderolabs/sbc-raspberrypi#71](https://github.com/siderolabs/sbc-raspberrypi/pull/71)
+(merged 2026-01-24), which replaces the Pi firmware repo's downstream DTBs
+with upstream-kernel ones. This fixes Ethernet and closes the exact
+"stuck at the U-Boot logo, black screen" issue this project hit
+([#23](https://github.com/siderolabs/sbc-raspberrypi/issues/23)). The
+previous update was written without checking whether a fix had already
+landed — a process gap worth naming alongside the technical one.
+
+**Reinstating the Raspberry Pi 5 as the Milestone 1 target**, using the
+hardware already on hand (Pi 5, external USB SSD, Ethernet). The critical
+change from the original attempt: build the image at Image Factory with
+the **`rpi_5`** overlay/profile specifically — not `rpi_generic` (Pi 4) and
+not a plain no-overlay image. Using the wrong overlay reproduces the exact
+black-screen symptom this project hit the first time.
+
+The x86 mini PC path from the update above remains good general guidance
+for later nodes (Milestone 6, mixed ARM64/x86 workers) — it just isn't
+needed to unblock Milestone 1 anymore.
