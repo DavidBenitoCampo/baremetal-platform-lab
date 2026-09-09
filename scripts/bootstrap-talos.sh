@@ -35,7 +35,7 @@ cmd_generate() {
   local endpoint_ip="$1"
   mkdir -p "${SECRETS_DIR}"
   talosctl gen config "${CLUSTER_NAME}" "https://${endpoint_ip}:6443" \
-    --config-patch "@${PATCHES_DIR}/pi5.yaml" \
+    --config-patch "@${PATCHES_DIR}/minipc.yaml" \
     --config-patch-control-plane "@${PATCHES_DIR}/controlplane.yaml" \
     --output-dir "${SECRETS_DIR}" \
     --force
