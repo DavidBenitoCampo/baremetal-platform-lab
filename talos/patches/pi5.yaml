@@ -22,7 +22,7 @@ machine:
     disk: /dev/sda
     # Build this at https://factory.talos.dev with overlay `rpi_5` and pin
     # it to the Talos version you're actually running.
-    image: factory.talos.dev/metal-installer/<SCHEMATIC_ID>:v1.14.0
+    image: factory.talos.dev/metal-installer/a636242df247ad4aad2e36d1026d8d4727b716a3061749bd7b19651e548f65e4:v1.14.0
   time:
     servers:
       - time.cloudflare.com
