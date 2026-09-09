@@ -1,0 +1,18 @@
+# Talos machine config patch: control-plane role, Milestone 1 single-node cluster.
+#
+# Non-secret: safe to commit. Used with
+# `talosctl gen config --config-patch-control-plane @talos/patches/controlplane.yaml`.
+#
+# This exists only because there is exactly one node right now and it must
+# run both the control plane and workloads. Milestone 6 (multi-node) should
+# drop `allowSchedulingOnControlPlanes` once dedicated workers exist.
+machine:
+  network:
+    hostname: pi5-cp-01
+  certSANs:
+    # Replace with the static IP / hostname you will actually reach the
+    # Kubernetes API on. Must be set before the first `talosctl gen config`
+    # run — certSANs can't be added later without regenerating certificates.
+    - 10.10.20.10
+cluster:
+  allowSchedulingOnControlPlanes: true

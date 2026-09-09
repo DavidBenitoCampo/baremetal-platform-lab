@@ -50,7 +50,7 @@ The project starts with a single Raspberry Pi 5 and evolves incrementally into a
 ## Initial Hardware
 
 - Raspberry Pi 5, 8 GB
-- NVMe storage (planned)
+- External USB SSD (boot/install media for the Pi 5)
 - 10-inch modular 3D-printed rack
 - Managed switch (planned)
 - OPNsense firewall appliance (planned)
@@ -117,6 +117,7 @@ See [ROADMAP.md](ROADMAP.md).
 - [ ] First commit pushed
 
 Next: **Milestone 1 — Bootstrap a single-node Talos Kubernetes cluster on Raspberry Pi 5.**
+(Requires the `rpi_5` Image Factory overlay, not `rpi_generic` — see [ADR-002](docs/adr/0002-use-talos-linux.md).)
 
 ## Principles
 
