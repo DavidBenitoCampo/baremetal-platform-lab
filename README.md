@@ -49,9 +49,8 @@ The project starts with a single Raspberry Pi 5 and evolves incrementally into a
 
 ## Initial Hardware
 
-- x86 mini PC (Milestone 1 Talos control plane)
-- Raspberry Pi 5, 8 GB (repurposed for CKA/kubeadm practice — see ADR-002)
-- NVMe storage (planned)
+- Raspberry Pi 5, 8 GB
+- External USB SSD (boot/install media for the Pi 5)
 - 10-inch modular 3D-printed rack
 - Managed switch (planned)
 - OPNsense firewall appliance (planned)
@@ -117,8 +116,8 @@ See [ROADMAP.md](ROADMAP.md).
 - [ ] Create GitHub repository
 - [ ] First commit pushed
 
-Next: **Milestone 1 — Bootstrap a single-node Talos Kubernetes cluster on an x86 mini PC.**
-(Raspberry Pi 5 deferred as the Talos target — see [ADR-002](docs/adr/0002-use-talos-linux.md#update--2026-09-09-first-target-changed-to-x86-mini-pc); it's being repurposed for CKA practice instead.)
+Next: **Milestone 1 — Bootstrap a single-node Talos Kubernetes cluster on Raspberry Pi 5.**
+(Requires the `rpi_5` Image Factory overlay, not `rpi_generic` — see [ADR-002](docs/adr/0002-use-talos-linux.md).)
 
 ## Principles
 

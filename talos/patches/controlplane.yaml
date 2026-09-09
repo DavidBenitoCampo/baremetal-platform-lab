@@ -8,7 +8,7 @@
 # drop `allowSchedulingOnControlPlanes` once dedicated workers exist.
 machine:
   network:
-    hostname: minipc-cp-01
+    hostname: pi5-cp-01
   certSANs:
     # Replace with the static IP / hostname you will actually reach the
     # Kubernetes API on. Must be set before the first `talosctl gen config`
