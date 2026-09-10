@@ -107,3 +107,33 @@ black-screen symptom this project hit the first time.
 The x86 mini PC path from the update above remains good general guidance
 for later nodes (Milestone 6, mixed ARM64/x86 workers) — it just isn't
 needed to unblock Milestone 1 anymore.
+
+## Update — 2026-09-10: Boot Media Must Be the microSD
+
+Talos boots on the Pi 5 via Pi firmware → U-Boot → kernel, and **U-Boot
+cannot read USB block devices** — USB only becomes available once Linux is
+running. A USB SSD holding the boot partition therefore gets as far as the
+U-Boot stage and stalls; confirmed directly by booting this node with the
+microSD removed, which left the board sitting in U-Boot despite the SSD
+carrying an identical, freshly written Talos partition layout.
+
+Consequence for this node's disk layout:
+
+- **microSD** — boot and system disk (`machine.install.disk: /dev/mmcblk0`).
+- **External USB SSD** — the `EPHEMERAL` volume, which backs `/var`,
+  including `/var/lib/etcd` and container images.
+
+This keeps the original reason for buying an SSD intact: etcd's constant
+small writes, which are what wear out SD cards and what benefit most from
+the SSD's random I/O, land on the SSD rather than the card. The card holds
+boot artifacts that are written rarely.
+
+Two constraints this creates, both recorded here because they are easy to
+trip over later:
+
+1. Volume configuration only applies while a volume is unprovisioned, so
+   the EPHEMERAL relocation must be present at the first `apply-config`.
+   Changing it afterwards requires wiping the volume.
+2. `/var` now depends on the USB SSD remaining attached. Losing the SSD
+   costs the node its etcd data and container storage — relevant to the
+   failure scenarios planned for Milestone 7.
