@@ -10,9 +10,13 @@ machine:
   network:
     hostname: pi5-cp-01
   certSANs:
-    # Replace with the static IP / hostname you will actually reach the
-    # Kubernetes API on. Must be set before the first `talosctl gen config`
-    # run — certSANs can't be added later without regenerating certificates.
-    - 10.10.20.10
+    # Every address the API server may be reached on, now or later. These are
+    # baked into the PKI at `talosctl gen config` time and can't be added
+    # afterwards without regenerating certificates — so the future VLAN 20
+    # address (Milestone 3) is listed up front to avoid a regeneration when
+    # the node moves networks.
+    - 10.0.1.16      # current LAN address (DHCP reservation)
+    - 10.10.20.10    # planned VLAN 20 address, Milestone 3
+    - pi5-cp-01
 cluster:
   allowSchedulingOnControlPlanes: true

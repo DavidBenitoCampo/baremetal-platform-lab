@@ -1,0 +1,27 @@
+# Talos VolumeConfig: put the EPHEMERAL volume on the external USB SSD.
+#
+# Non-secret: safe to commit. Applied as an extra `--config-patch` alongside
+# pi5.yaml and controlplane.yaml.
+#
+# Why: the Pi 5 must boot from the microSD (U-Boot can't read USB), but the
+# SD card is a poor home for etcd's constant small writes. EPHEMERAL backs
+# /var — including /var/lib/etcd and container images — so relocating it to
+# the SSD moves nearly all write churn off the card and onto much faster
+# storage.
+#
+# Timing matters: volume configuration only takes effect while the volume is
+# still unprovisioned. This must be present at the FIRST apply-config;
+# changing it later means wiping EPHEMERAL.
+#
+# Trade-off: /var now depends on the USB SSD staying attached. If it drops
+# off the bus, the node loses etcd and container storage.
+#
+# The selector matches by transport rather than model/serial so replacing the
+# SSD doesn't require a config change; `!system_disk` keeps it from ever
+# selecting the boot media.
+apiVersion: v1alpha1
+kind: VolumeConfig
+name: EPHEMERAL
+provisioning:
+  diskSelector:
+    match: disk.transport == "usb" && !system_disk

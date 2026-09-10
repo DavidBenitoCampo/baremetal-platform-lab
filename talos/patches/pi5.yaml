@@ -15,11 +15,14 @@
 # before flashing, since SBC support keeps moving.
 machine:
   install:
-    # Replace with the real target disk once known. In maintenance mode, run
-    # `talosctl get disks --insecure -n <maintenance-ip>` to see what the Pi
-    # enumerates. With an external USB SSD as boot/install media this is
-    # typically /dev/sda; NVMe would be /dev/nvme0n1, SD card /dev/mmcblk0.
-    disk: /dev/sda
+    # The boot/system disk MUST be the microSD on this board. U-Boot on the
+    # Pi 5 cannot read USB block devices — USB only comes up once Linux is
+    # running — so a USB SSD holding the boot partition gets as far as the
+    # U-Boot stage and stalls there. Verified the hard way: booting with the
+    # SD removed leaves the board sitting in U-Boot.
+    # Write-heavy data lives on the SSD instead, via the EPHEMERAL volume
+    # patch (talos/patches/ephemeral-ssd.yaml).
+    disk: /dev/mmcblk0
     # Build this at https://factory.talos.dev with overlay `rpi_5` and pin
     # it to the Talos version you're actually running.
     image: factory.talos.dev/metal-installer/a636242df247ad4aad2e36d1026d8d4727b716a3061749bd7b19651e548f65e4:v1.14.0
