@@ -3,12 +3,17 @@
 # Non-secret: safe to commit. Used with
 # `talosctl gen config --config-patch-control-plane @talos/patches/controlplane.yaml`.
 #
-# This exists only because there is exactly one node right now and it must
-# run both the control plane and workloads. Milestone 6 (multi-node) should
-# drop `allowSchedulingOnControlPlanes` once dedicated workers exist.
+# Two settings that used to live here have moved in Talos v1.14 and were
+# removed rather than duplicated, since setting both forms fails validation:
+#
+#   - `machine.network.hostname` -> the HostnameConfig document, which
+#     defaults to `auto: stable`. Left at the default; the hostname is
+#     cosmetic for a single node.
+#   - `cluster.allowSchedulingOnControlPlanes` -> expressed as a taint in
+#     KubeNodeConfig (`node-role.kubernetes.io/control-plane: NoSchedule`).
+#     Removing that taint is what allows workloads to schedule here, and is
+#     needed before Milestone 2 deploys anything.
 machine:
-  network:
-    hostname: pi5-cp-01
   certSANs:
     # Every address the API server may be reached on, now or later. These are
     # baked into the PKI at `talosctl gen config` time and can't be added
@@ -20,5 +25,3 @@ machine:
                      # in case this node moves to a static address
     - 10.10.20.10    # planned VLAN 20 address, Milestone 3
     - pi5-cp-01
-cluster:
-  allowSchedulingOnControlPlanes: true
