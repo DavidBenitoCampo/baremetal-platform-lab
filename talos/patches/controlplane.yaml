@@ -15,7 +15,9 @@ machine:
     # afterwards without regenerating certificates — so the future VLAN 20
     # address (Milestone 3) is listed up front to avoid a regeneration when
     # the node moves networks.
-    - 10.0.1.16      # current LAN address (DHCP reservation)
+    - 10.0.1.16      # current LAN address (O2 Smart Box DHCP reservation)
+    - 10.0.1.200     # spare, outside the router's 10.0.1.10-137 DHCP pool,
+                     # in case this node moves to a static address
     - 10.10.20.10    # planned VLAN 20 address, Milestone 3
     - pi5-cp-01
 cluster:
