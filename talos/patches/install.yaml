@@ -1,0 +1,23 @@
+# Talos UnattendedInstallConfig: where and from what to install.
+#
+# Non-secret: safe to commit. Applied as a `--config-patch`.
+#
+# Talos v1.14 moved install settings out of the deprecated v1alpha1
+# `.machine.install` section into this document. Setting both is rejected
+# at validation time ("UnattendedInstallConfig config is incompatible with
+# v1alpha1 config"), so the install settings live here and nowhere else.
+#
+# The installer image must carry the `rpi_5` overlay — the Image Factory
+# default has no Pi 5 support and would produce a node that won't boot.
+#
+# The disk is matched by transport rather than a device path: the microSD is
+# the only `mmc` device, and U-Boot on the Pi 5 can't boot anything else
+# (see ADR-002). Matching `/dev/mmcblk0` literally would also work but
+# breaks if enumeration ever shifts.
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+installer:
+  image: factory.talos.dev/metal-installer/a636242df247ad4aad2e36d1026d8d4727b716a3061749bd7b19651e548f65e4:v1.14.0
+provisioning:
+  diskSelector:
+    match: disk.transport == "mmc"
