@@ -2,7 +2,7 @@
 
 ## Commit conventions
 
-Author commits as `DavidBenitoCampo <davbecam14@gmail.com>`.
+Author commits as `DavidBenitoCampo <davbecam@gmail.com>`.
 
 Do not add `Co-Authored-By` or `Claude-Session` trailers to commit messages.
 
