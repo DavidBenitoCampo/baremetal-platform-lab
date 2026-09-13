@@ -3,26 +3,16 @@
 # Applied to every machine (control plane and worker) that runs on a Pi 5.
 # Non-secret: safe to commit. Used with `talosctl gen config --config-patch @talos/patches/pi5.yaml`.
 #
-# Requires the dedicated `rpi_5` overlay when building the image at
-# https://factory.talos.dev (siderolabs/sbc-raspberrypi, profile `rpi_5`) —
-# NOT the generic `rpi_generic` overlay used for the Pi 4, and not a
-# no-overlay image. The `rpi_5` profile replaces the Pi firmware repo's
-# downstream DTBs with upstream-kernel ones, which is what actually fixes
-# Ethernet — see https://github.com/siderolabs/sbc-raspberrypi/pull/71.
-# The wrong overlay reproduces a "stuck at the U-Boot logo, black screen,
-# no network" boot (see ADR-002's history) — verify against
-# https://docs.siderolabs.com/talos/latest/platform-specific-installations/single-board-computers/
-# before flashing, since SBC support keeps moving.
+# Install settings used to live here, in the v1alpha1 `.machine.install`
+# section. Talos v1.14 deprecated that in favour of the UnattendedInstallConfig
+# document — see talos/patches/install.yaml. Setting both is a validation
+# error, so only v1alpha1-native settings remain in this file.
+#
+# The image itself must be built at https://factory.talos.dev with the
+# `rpi_5` overlay (siderolabs/sbc-raspberrypi) — not `rpi_generic`, which is
+# the Pi 4 profile. The wrong overlay produces a boot that stalls at the
+# U-Boot logo with no network; see ADR-002 for the history.
 machine:
-  install:
-    # Replace with the real target disk once known. In maintenance mode, run
-    # `talosctl get disks --insecure -n <maintenance-ip>` to see what the Pi
-    # enumerates. With an external USB SSD as boot/install media this is
-    # typically /dev/sda; NVMe would be /dev/nvme0n1, SD card /dev/mmcblk0.
-    disk: /dev/sda
-    # Build this at https://factory.talos.dev with overlay `rpi_5` and pin
-    # it to the Talos version you're actually running.
-    image: factory.talos.dev/metal-installer/<SCHEMATIC_ID>:v1.14.0
   time:
     servers:
       - time.cloudflare.com

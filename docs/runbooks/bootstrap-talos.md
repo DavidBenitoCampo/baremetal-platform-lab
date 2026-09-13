@@ -19,12 +19,29 @@ exactly what this project hit before finding the fix
 ([siderolabs/sbc-raspberrypi#71](https://github.com/siderolabs/sbc-raspberrypi/pull/71),
 merged 2026-01-24).
 
+## Disk layout
+
+U-Boot on the Pi 5 cannot read USB block devices, so the boot media has to
+be the microSD — a USB SSD holding the boot partition stalls at the U-Boot
+stage. The SSD earns its keep as the `EPHEMERAL` volume instead:
+
+| Disk | Role |
+|---|---|
+| microSD (`/dev/mmcblk0`) | Boot + system disk |
+| External USB SSD (`/dev/sda`) | `EPHEMERAL` volume — `/var`, etcd, container images |
+
+See [ADR-002](../adr/0002-use-talos-linux.md#update--2026-09-10-boot-media-must-be-the-microsd)
+for the reasoning. The EPHEMERAL relocation lives in
+[`talos/patches/ephemeral-ssd.yaml`](../../talos/patches/ephemeral-ssd.yaml)
+and **must** be applied at the first `apply-config` — volume config only
+takes effect while the volume is unprovisioned.
+
 ## Prerequisites
 
 - `talosctl` and `kubectl` installed locally, matching versions (check
   `talosctl version --client` against the Talos version you flash).
-- Raspberry Pi 5, an external USB SSD as boot/install media, and a wired
-  Ethernet connection.
+- Raspberry Pi 5, a microSD card as boot media, an external USB SSD for
+  data, and a wired Ethernet connection.
 - Strongly recommended: a USB-to-serial (UART) adapter on the GPIO pins.
   Given this exact hardware's history of silently failing past the U-Boot
   stage, don't rely on HDMI alone — serial is the only view into what's
@@ -59,18 +76,21 @@ mass-storage devices, since the external SSD is USB-attached.
    [`talos/patches/pi5.yaml`](../../talos/patches/pi5.yaml) with that
    schematic ID and version.
 3. Download the disk image (`metal-arm64.raw.xz`) and write it directly to
-   the external USB SSD — for the Pi 5's prebuilt SBC image there's no
-   separate "install to a different disk" step; the media you flash is the
-   media it boots and (re)installs onto:
+   the **microSD** — not the SSD. For the Pi 5's prebuilt SBC image there's
+   no separate "install to a different disk" step; the media you flash is
+   the media it boots and (re)installs onto:
 
    ```sh
    xz -d -c metal-arm64.raw.xz | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync
    ```
 
-4. Confirm `machine.install.disk` in `talos/patches/pi5.yaml` matches how
-   that same SSD will enumerate from the Pi's own point of view (commonly
-   `/dev/sda` for a single USB SSD) — verify with the `get disks` command in
-   step 3 below rather than assuming.
+   Identify `/dev/sdX` with `lsblk` before and after inserting the card —
+   note that a microSD in a USB card reader also enumerates as `/dev/sdX`,
+   so size alone is not enough to tell it apart from an SSD.
+
+4. Leave the SSD unflashed. It gets partitioned by Talos as the EPHEMERAL
+   volume during install; writing a boot image to it only creates a second
+   bootable-looking disk that can confuse the boot order later.
 
 ## 3. First boot — find the node
 
@@ -129,11 +149,13 @@ Milestone 1 is done when `kubectl get nodes` shows the node `Ready` and
 
 | Symptom | Likely cause |
 |---|---|
-| Stuck at the U-Boot logo, black screen, nothing on serial after | Wrong overlay used when building the image — must be `rpi_5`, not `rpi_generic` or none. Rebuild the schematic at Image Factory and reflash. |
+| Stuck at the U-Boot logo, black screen, nothing on serial after | Either the wrong overlay (must be `rpi_5`, not `rpi_generic` or none — rebuild the schematic and reflash), or the boot partition is on a USB disk. U-Boot can't read USB; boot media must be the microSD. |
 | No DHCP lease, no serial output past U-Boot | EEPROM boot order doesn't include USB — recheck step 1 — or the Ethernet cable/switch port isn't live. |
 | `talosctl get disks --insecure` doesn't show the SSD | USB enumeration issue — try the Pi 5's USB3 (blue) port specifically. |
 | `apply-config` succeeds but node never comes back on the endpoint IP | Wrong `machine.install.disk` in `pi5.yaml` (install failed) — recheck via serial, or `get disks --insecure` from a fresh maintenance boot. |
 | `bootstrap` hangs or errors | Ran before the node finished installing/rebooting after `apply-config` — wait longer and retry; `bootstrap` is only ever run once per cluster. |
+| `bootstrap` returns `AlreadyExists: etcd data directory is not empty` | etcd is already initialised — bootstrap refusing to run twice, not a failure. Check `talosctl service etcd` and `kubectl get nodes` instead of retrying. |
+| Node name is something like `talos-k5z-bbd`, not the expected hostname | Expected. `HostnameConfig` defaults to `auto: stable`; no static hostname is set. |
 | `kubectl get nodes` shows `NotReady` indefinitely | CNI or kubelet issue — `talosctl -n <ip> dashboard` and `talosctl -n <ip> logs kubelet` for detail. |
 
 ## Recovery
