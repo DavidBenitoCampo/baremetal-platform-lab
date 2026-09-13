@@ -154,6 +154,8 @@ Milestone 1 is done when `kubectl get nodes` shows the node `Ready` and
 | `talosctl get disks --insecure` doesn't show the SSD | USB enumeration issue — try the Pi 5's USB3 (blue) port specifically. |
 | `apply-config` succeeds but node never comes back on the endpoint IP | Wrong `machine.install.disk` in `pi5.yaml` (install failed) — recheck via serial, or `get disks --insecure` from a fresh maintenance boot. |
 | `bootstrap` hangs or errors | Ran before the node finished installing/rebooting after `apply-config` — wait longer and retry; `bootstrap` is only ever run once per cluster. |
+| `bootstrap` returns `AlreadyExists: etcd data directory is not empty` | etcd is already initialised — bootstrap refusing to run twice, not a failure. Check `talosctl service etcd` and `kubectl get nodes` instead of retrying. |
+| Node name is something like `talos-k5z-bbd`, not the expected hostname | Expected. `HostnameConfig` defaults to `auto: stable`; no static hostname is set. |
 | `kubectl get nodes` shows `NotReady` indefinitely | CNI or kubelet issue — `talosctl -n <ip> dashboard` and `talosctl -n <ip> logs kubelet` for detail. |
 
 ## Recovery

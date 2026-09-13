@@ -105,19 +105,16 @@ See [ROADMAP.md](ROADMAP.md).
 
 ## Current Status
 
-**Milestone 0 — Repository foundation**
+**Milestone 1 — Single-node Kubernetes: complete (2026-09-13)**
 
-- [x] Repository structure
-- [x] Initial README
-- [x] Architecture overview
-- [x] Roadmap
-- [x] ADR-001
-- [x] ADR-002
-- [ ] Create GitHub repository
-- [ ] First commit pushed
+A single-node cluster runs on the Raspberry Pi 5: Kubernetes v1.37.0 on
+Talos v1.14.0 (arm64), booting from microSD with `/var` and etcd on an
+external USB SSD. Rebuildable from [the runbook](docs/runbooks/bootstrap-talos.md)
+and the patches in [`talos/patches/`](talos/patches/).
 
-Next: **Milestone 1 — Bootstrap a single-node Talos Kubernetes cluster on Raspberry Pi 5.**
-(Requires the `rpi_5` Image Factory overlay, not `rpi_generic` — see [ADR-002](docs/adr/0002-use-talos-linux.md).)
+Next: **Milestone 2 — GitOps with Flux CD.** First step is removing the
+control-plane `NoSchedule` taint, since nothing can schedule on the node
+until then.
 
 ## Principles
 
