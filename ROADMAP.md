@@ -18,17 +18,20 @@ Goal: establish the project structure, architecture documentation, and decision 
 Goal: run Kubernetes reproducibly on the Raspberry Pi 5, using the `rpi_5`
 Image Factory overlay (see ADR-002).
 
-- [ ] Connect external USB SSD as boot/install media
-- [ ] Boot Raspberry Pi 5 for Talos
-- [ ] Generate Talos machine configuration
-- [ ] Bootstrap Kubernetes
-- [ ] Configure remote `talosctl`
-- [ ] Configure remote `kubectl`
-- [ ] Validate node health
-- [ ] Document bootstrap procedure
-- [ ] Create recovery notes
+- [x] Boot Raspberry Pi 5 for Talos (microSD as boot disk — U-Boot can't read USB)
+- [x] Attach external USB SSD as the `EPHEMERAL` volume (/var, etcd, images)
+- [x] Generate Talos machine configuration
+- [x] Bootstrap Kubernetes
+- [x] Configure remote `talosctl`
+- [x] Configure remote `kubectl`
+- [x] Validate node health
+- [x] Document bootstrap procedure
+- [x] Create recovery notes
 
-Exit criteria: a working single-node Kubernetes cluster that can be rebuilt from documented configuration.
+Exit criteria: a working single-node Kubernetes cluster that can be rebuilt from documented configuration. **Met 2026-09-13** — node `Ready`, Kubernetes v1.37.0 on Talos v1.14.0 (arm64).
+
+Carried into Milestone 2: the control-plane `NoSchedule` taint is still in
+place, so no workloads can schedule on the node yet.
 
 ## Milestone 2 — GitOps
 
