@@ -112,9 +112,9 @@ Talos v1.14.0 (arm64), booting from microSD with `/var` and etcd on an
 external USB SSD. Rebuildable from [the runbook](docs/runbooks/bootstrap-talos.md)
 and the patches in [`talos/patches/`](talos/patches/).
 
-Next: **Milestone 2 — GitOps with Flux CD.** First step is removing the
-control-plane `NoSchedule` taint, since nothing can schedule on the node
-until then.
+Milestone 2 is underway: Flux CD v2.9.5 is bootstrapped and reconciling
+[`clusters/homelab/`](clusters/homelab/) from this repository. Next is
+deploying an application through Git alone.
 
 ## Principles
 

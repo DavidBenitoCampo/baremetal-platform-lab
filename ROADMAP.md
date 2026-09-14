@@ -30,20 +30,25 @@ Image Factory overlay (see ADR-002).
 
 Exit criteria: a working single-node Kubernetes cluster that can be rebuilt from documented configuration. **Met 2026-09-13** — node `Ready`, Kubernetes v1.37.0 on Talos v1.14.0 (arm64).
 
-Carried into Milestone 2: the control-plane `NoSchedule` taint is still in
-place, so no workloads can schedule on the node yet.
+No control-plane taint was applied, so workloads schedule on the node
+without further work.
 
 ## Milestone 2 — GitOps
 
 Goal: make Git the deployment source of truth.
 
-- [ ] Bootstrap Flux CD
+- [x] Bootstrap Flux CD (v2.9.5, reconciling `clusters/homelab`)
 - [ ] Define cluster reconciliation structure
 - [ ] Deploy a test application through Git only
 - [ ] Add HelmRepository / HelmRelease examples
 - [ ] Add basic manifest validation in GitHub Actions
 
 Exit criteria: workloads are deployed and changed through GitOps.
+
+Image automation is out of scope here. Bootstrap installed four
+controllers and no `image.toolkit.fluxcd.io` CRDs, so `ImagePolicy` and
+`ImageUpdateAutomation` need a re-bootstrap with `--components-extra` and
+a writable deploy key.
 
 ## Milestone 3 — Networking
 
