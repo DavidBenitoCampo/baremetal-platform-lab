@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkding
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkding
+  template:
+    metadata:
+      labels:
+        app: linkding
+    spec:
+      containers:
+      - name: linkding
+        image: docker.io/sissbruecker/linkding:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9090
+          name: http
+        env:
+        - name: LD_DISABLE_BACKGROUND_TASKS
+          value: "false"
+        - name: LD_CONTEXT_PATH
+          value: "/"
+        volumeMounts:
+        - name: data
+          mountPath: /etc/linkding/data
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+      volumes:
+      - name: data
+        emptyDir: {}
