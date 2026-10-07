@@ -1,81 +1,119 @@
-# Fresh cluster bootstrap
+# Setting up the Pi
 
-## Purpose
+This is the setup I used for the Raspberry Pi 5: Ubuntu Server on the USB SSD, SSH key access, and K3s installed through Ansible.
 
-Install one pinned ARM64 K3s server on a fresh SSD based Ubuntu Server host.
-This starter does not install the application, Flux, or monitoring.
+The playbook prepares the host and installs K3s. Application deployments, the planned LLM service, GitOps, and monitoring are separate steps.
 
-## Prerequisites
+If the cluster already works, go straight to [Check the cluster](#check-the-cluster). Keep the existing installation.
 
-Use Ubuntu Server 24.04 LTS ARM64, a stable PSU, cooling, SSD, and a trusted LAN.
-Use an existing computer with Ansible, an SSH key, and sudo access to the Pi.
-Use key login before disabling password or root SSH login. Store the inventory
-locally. Keep a second existing computer disk available for the later backup test.
+## Before starting
 
-## OS and access
+The Pi needs Ubuntu Server 24.04 LTS ARM64, SSD storage, cooling, a suitable power supply, and a network connection. Back up any files needed from the SSD before writing the Ubuntu image.
 
-1. Preserve wanted old files and write the official Ubuntu ARM64 image to the
-   selected SSD. Verify the selected disk before the write.
-2. Boot the Pi, set a stable LAN address or DHCP reservation, and verify key SSH.
-3. On the Pi, run `uname -m`, `findmnt -no SOURCE,FSTYPE /`, and `free -h`.
-4. Copy `scripts/preflight.sh` to the Pi and run `bash preflight.sh`.
+On the workstation, have Ansible installed and verify SSH key access to a Pi user with sudo access. For this lab, the user is `lab` and the address is `10.0.1.16`. Change the address and key path for another setup.
 
-Expected architecture: aarch64. Root storage resolves to the SSD.
-Record cgroup support and available memory.
+Run the workstation commands from the repository root:
 
-## Explain and run Ansible
+```bash
+PI_ADDRESS=10.0.1.16
+ssh -i ~/.ssh/pi_lab_ed25519 lab@"${PI_ADDRESS}" 'sudo cloud-init status --wait'
+```
 
-Read each task in `ansible/host.yml`. The prechecks refuse an unexpected OS,
-microSD root, missing memory cgroups, unrelated K3s state, or a version mismatch.
-The tasks install prerequisites, enable network forwarding, and write restricted
-K3s settings. The pinned official installer validates the released binary.
-The service starts only after configuration exists.
+Cloud-init should finish before host preparation. Use a DHCP reservation or another stable address so workstation access keeps working after a reboot.
 
-Inspect the installer at the pinned upstream tag before running the playbook.
-Read release notes and record checksums during implementation.
+## Check the host
+
+Copy and run the preflight script:
+
+```bash
+scp -i ~/.ssh/pi_lab_ed25519 scripts/preflight.sh lab@"${PI_ADDRESS}":/tmp/preflight.sh
+ssh -i ~/.ssh/pi_lab_ed25519 lab@"${PI_ADDRESS}" 'bash /tmp/preflight.sh'
+```
+
+Look for `aarch64`, an SSD-backed root filesystem, and the memory cgroup controller. In this lab, root is `/dev/sda2`. Record available memory and disk space before adding workloads.
+
+## Run Ansible
+
+For a new setup, create the local inventory:
 
 ```bash
 cp ansible/inventory.example.ini ansible/inventory.ini
-ansible-playbook -i ansible/inventory.ini ansible/host.yml --syntax-check
-ansible-playbook -i ansible/inventory.ini ansible/host.yml --ask-become-pass
 ```
 
-Change `YOUR_PI_IP`, the user, and private key path in the untracked inventory.
-Use the actual sudo password when prompted. Use your existing Ansible installation
-and record the version. No community collection is needed by this playbook.
+Edit the address, user, and SSH key path in `ansible/inventory.ini`. Keep an existing working inventory unchanged. Git ignores this file.
 
-## Verify
+Read [the playbook](../../ansible/host.yml), then check its syntax and run the host preparation:
 
 ```bash
-ssh lab@PI_ADDRESS sudo k3s kubectl get nodes -o wide
-ssh lab@PI_ADDRESS sudo k3s kubectl get pods -A
-ssh lab@PI_ADDRESS sudo k3s secrets-encrypt status
-ansible-playbook -i ansible/inventory.ini ansible/host.yml --ask-become-pass
+ansible-playbook -i ansible/inventory.ini ansible/host.yml --syntax-check
+ansible-playbook -i ansible/inventory.ini ansible/host.yml
 ```
 
-Expect one Ready ARM64 node, healthy packaged components, encryption enabled,
-and zero changes on the repeated playbook run. Then reboot and check readiness.
-Save actual outputs in a sanitized environment record.
+The `lab` user in this setup has passwordless sudo. Add `--ask-become-pass` to the execution command when the chosen user needs a sudo password.
 
-## Access restrictions
+The playbook checks the OS, root storage, cgroups, and existing K3s state before installing anything. The host tasks load the required kernel modules, configure forwarding, and write the K3s configuration before starting the service.
 
-Complete source restrictions before treating the lab as a finished security demo.
-Use SSH keys, deny root login, and disable password SSH after verifying key access.
-No WAN port forwarding belongs in this lab. Use SSH access for administrative tools.
+The current pinned release is `v1.36.5+k3s1`. This single-server setup uses SQLite and enables Kubernetes Secrets encryption. The playbook refuses an unrelated existing cluster or a different installed K3s version.
 
-A host firewall should allow your operator source to SSH and app HTTP, while
-preserving the K3s Pod and Service CIDR paths and required forwarding. Follow the
-K3s official networking requirements and test Pod DNS, registry access, and routing
-after enabling the firewall. Record actual source IPs privately and retain a
-rollback connection while changing access.
+## Check the cluster
 
-Use SSH tunnels for monitoring interfaces. Restrict the API to the chosen admin
-path. The starter playbook does not silently choose your LAN trust range or
-enable a firewall with guessed source addresses.
+Set the address again if using a new terminal:
 
-## Failure handling
+```bash
+PI_ADDRESS=10.0.1.16
+ssh -i ~/.ssh/pi_lab_ed25519 lab@"${PI_ADDRESS}" 'sudo k3s kubectl get nodes -o wide'
+ssh -i ~/.ssh/pi_lab_ed25519 lab@"${PI_ADDRESS}" 'sudo k3s kubectl get pods -A'
+ssh -i ~/.ssh/pi_lab_ed25519 lab@"${PI_ADDRESS}" 'sudo k3s secrets-encrypt status'
+```
 
-Read `journalctl -u k3s` locally. Check cgroups, power, SSD mount, disk space,
-and registry DNS. Repair the observed cause before reinstalling.
-The playbook does not erase disks, delete cluster state, adopt an unrelated
-cluster, or upgrade an existing version.
+The node should report `Ready`. The running system Pods should be healthy. Completed Traefik installation Jobs are expected. Secrets encryption should report `Enabled`.
+
+Run the playbook a second time:
+
+```bash
+ansible-playbook -i ansible/inventory.ini ansible/host.yml
+```
+
+For an unchanged host, expect zero changes and zero failures. The recorded second run in this lab matched both checks.
+
+## Test a reboot
+
+Once the cluster is healthy, reboot the Pi:
+
+```bash
+ssh -i ~/.ssh/pi_lab_ed25519 lab@"${PI_ADDRESS}" 'sudo reboot'
+```
+
+The SSH connection will close. Wait for SSH access to return, then check the service and node:
+
+```bash
+ssh -i ~/.ssh/pi_lab_ed25519 lab@"${PI_ADDRESS}" 'sudo systemctl is-active k3s'
+ssh -i ~/.ssh/pi_lab_ed25519 lab@"${PI_ADDRESS}" 'sudo k3s kubectl wait --for=condition=Ready node/pi-lab --timeout=120s'
+ssh -i ~/.ssh/pi_lab_ed25519 lab@"${PI_ADDRESS}" 'sudo k3s kubectl get pods -A'
+```
+
+Save the results in [the cluster evidence record](../evidence/2026-10-07-initial-cluster.md). The reboot test passed on 7 October 2026.
+
+## Keep access local
+
+Use SSH keys and verify key access before disabling SSH password authentication or root SSH access. Keep the private key, kubeconfig, and real inventory outside Git.
+
+Keep SSH and Kubernetes administration on the trusted lab network. Use port-forwarding or SSH tunnels for admin interfaces, with no router forwarding from the internet.
+
+Firewall rules depend on the actual network. Allow the chosen admin source and preserve Kubernetes Pod, Service, and forwarding traffic. Keep an SSH session open while changing rules, then test Pod DNS, image pulls, and application routing. The host playbook does not configure these source restrictions.
+
+## If K3s does not start
+
+SSH into the Pi and check the service, logs, and storage:
+
+```bash
+sudo systemctl status k3s --no-pager
+sudo journalctl -u k3s -n 100 --no-pager
+findmnt -no SOURCE,FSTYPE /
+df -h /
+cat /sys/fs/cgroup/cgroup.controllers
+```
+
+Check power and the USB connection if the SSD disappears or disconnects. For image-pull errors, check DNS and registry access. Fix the reported cause before considering a reinstall.
+
+K3s upgrades need their own procedure and a backup stored on another computer. The backup and restore exercise is still planned.
