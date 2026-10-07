@@ -1,0 +1,5 @@
+# One K3s server with the default SQLite datastore.
+# K3s packages Traefik, CoreDNS, metrics server, and local path storage.
+node-name: {{ k3s_node_name }}
+write-kubeconfig-mode: '0600'
+secrets-encryption: true

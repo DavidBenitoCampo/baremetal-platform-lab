@@ -1,0 +1,16 @@
+ansible/inventory.ini
+ansible/inventory.local.*
+.env
+.env.*
+*.key
+*.pem
+kubeconfig*
+*.gpg
+*.age
+*.tar
+*.tar.gz
+*.tar.xz
+private/
+backups/
+__pycache__/
+*.pyc

@@ -1,0 +1,164 @@
+---
+- name: Prepare a fresh Raspberry Pi Kubernetes host
+  hosts: pi
+  become: true
+  gather_facts: true
+  vars:
+    k3s_version: v1.36.5+k3s1
+    k3s_node_name: pi-lab
+  pre_tasks:
+    - name: Require the chosen operating system and architecture
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['architecture'] == 'aarch64'
+          - ansible_facts['distribution'] == 'Ubuntu'
+          - ansible_facts['distribution_version'] == '24.04'
+        fail_msg: Use the selected Ubuntu Server 24.04 LTS ARM64 image.
+
+    - name: Read the root filesystem source
+      ansible.builtin.command: findmnt --evaluate -no SOURCE /
+      register: root_device
+      changed_when: false
+      check_mode: false
+
+    - name: Refuse root storage on microSD
+      ansible.builtin.assert:
+        that:
+          - "'mmcblk' not in root_device.stdout"
+        fail_msg: Verify the SSD hosts root before installing K3s.
+
+    - name: Inspect cgroup controllers
+      ansible.builtin.slurp:
+        src: /sys/fs/cgroup/cgroup.controllers
+      register: cgroup_controllers
+
+    - name: Require memory cgroups
+      ansible.builtin.assert:
+        that:
+          - "'memory' in (cgroup_controllers.content | b64decode)"
+        fail_msg: Enable memory cgroups and reboot before continuing.
+
+    - name: Inspect existing K3s binary
+      ansible.builtin.stat:
+        path: /usr/local/bin/k3s
+      register: k3s_binary
+
+    - name: Inspect existing server state
+      ansible.builtin.stat:
+        path: /var/lib/rancher/k3s/server
+      register: k3s_state
+
+    - name: Inspect this repository ownership marker
+      ansible.builtin.stat:
+        path: /etc/baremetal-platform-lab-managed
+      register: lab_marker
+
+    - name: Refuse automatic adoption of an unrelated cluster
+      ansible.builtin.assert:
+        that:
+          - lab_marker.stat.exists or not (k3s_binary.stat.exists or k3s_state.stat.exists)
+        fail_msg: Existing K3s belongs outside this fresh setup. Preserve wanted files and follow the fresh OS procedure.
+
+    - name: Read installed K3s version
+      ansible.builtin.command: /usr/local/bin/k3s --version
+      register: installed_version
+      changed_when: false
+      check_mode: false
+      when: k3s_binary.stat.exists
+
+    - name: Require a separate reviewed procedure for version changes
+      ansible.builtin.assert:
+        that:
+          - "('k3s version ' + k3s_version + ' ') in installed_version.stdout"
+        fail_msg: Back up and review the K3s upgrade separately. This playbook prepares the pinned initial version.
+      when: k3s_binary.stat.exists
+
+  tasks:
+    - name: Install small host prerequisites
+      ansible.builtin.apt:
+        name: [ca-certificates, curl, python3, gpg, tar]
+        state: present
+        update_cache: true
+        cache_valid_time: 86400
+
+    - name: Configure required modules
+      ansible.builtin.copy:
+        dest: /etc/modules-load.d/baremetal-lab.conf
+        content: "overlay\nbr_netfilter\n"
+        mode: '0644'
+
+    - name: Load required modules
+      ansible.builtin.command: "modprobe {{ item }}"
+      loop: [overlay, br_netfilter]
+      changed_when: false
+
+    - name: Configure Kubernetes forwarding
+      ansible.builtin.copy:
+        dest: /etc/sysctl.d/90-baremetal-lab.conf
+        content: |
+          net.ipv4.ip_forward=1
+          net.bridge.bridge-nf-call-iptables=1
+          net.bridge.bridge-nf-call-ip6tables=1
+        mode: '0644'
+      notify: Apply sysctls
+
+    - name: Create K3s configuration directory
+      ansible.builtin.file:
+        path: /etc/rancher/k3s
+        state: directory
+        mode: '0700'
+
+    - name: Write the single server configuration
+      ansible.builtin.template:
+        src: k3s-config.yaml.j2
+        dest: /etc/rancher/k3s/config.yaml
+        mode: '0600'
+      notify: Restart K3s
+
+    - name: Download installer from the pinned release
+      ansible.builtin.get_url:
+        url: "https://raw.githubusercontent.com/k3s-io/k3s/{{ k3s_version | urlencode }}/install.sh"
+        dest: /usr/local/src/k3s-install.sh
+        mode: '0700'
+      when: not k3s_binary.stat.exists
+
+    - name: Install the pinned server using the reviewed official installer
+      ansible.builtin.command: /bin/sh /usr/local/src/k3s-install.sh
+      environment:
+        INSTALL_K3S_VERSION: "{{ k3s_version }}"
+        INSTALL_K3S_EXEC: server
+        INSTALL_K3S_SKIP_START: 'true'
+      args:
+        creates: /usr/local/bin/k3s
+
+    - name: Mark the host as managed by this repository
+      ansible.builtin.copy:
+        dest: /etc/baremetal-platform-lab-managed
+        content: "baremetal-platform-lab\n"
+        mode: '0600'
+
+    - name: Apply initial configuration before readiness checks
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start K3s
+      ansible.builtin.systemd_service:
+        name: k3s
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: Wait for the node to become Ready
+      ansible.builtin.command: "/usr/local/bin/k3s kubectl wait --for=condition=Ready node/{{ k3s_node_name }} --timeout=180s"
+      changed_when: false
+      when: not ansible_check_mode
+
+  handlers:
+    - name: Apply sysctls
+      ansible.builtin.command: sysctl --system
+      changed_when: true
+
+    - name: Restart K3s
+      ansible.builtin.systemd_service:
+        name: k3s
+        state: restarted
+        daemon_reload: true

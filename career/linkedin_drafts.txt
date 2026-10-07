@@ -1,0 +1,75 @@
+The public index exposes part of your profile [P1]. The recent indexed headline leads with DevOps / Platform Engineer and Kubernetes. Your indexed About already connects Linux, Ansible, and infrastructure scale. Move the 180 to 30 second login result into the opening evidence. Keep IT Lead as your current Experience title.
+
+A precise audit needs your current headline, About, complete Experience text, Skills order, and Featured items. The Google share URL did not resolve through search. A direct linkedin.com/in URL or pasted sections will confirm the live wording. Skills, Featured, the banner, and full Experience did not receive a complete audit.
+
+The public English and local profile indexes differ in job titles and age. Your confirmed IT Lead title takes precedence. Verify certification issuer, credential, and current status before including a certification claim. The draft below adds no certifications.
+
+Three headlines ready for use
+
+Option 1, recommended: IT Lead at 42 Prague | Linux and Ansible | Infrastructure Automation | Prometheus and Grafana | DevOps and Platform Engineering
+
+Option 2: IT Lead | Linux Infrastructure and Ansible Automation | VMware, Containers and Observability | Moving into DevOps
+
+Option 3: IT Lead | Linux, Ansible and Infrastructure Reliability | Developing Kubernetes Skills | DevOps, SRE and Platform Roles
+
+Option 1 leads with your role and established strengths, while keeping target role keywords. Add Kubernetes release and recovery lab to the headline only after a public repository contains working deployment and exercise evidence.
+
+About ready for use now
+
+I work as IT Lead at 42 Prague. One project, an NFS to iSCSI migration, reduced login time from about three minutes to 30 seconds.
+
+I manage roughly 25 servers and virtual machines and 150 Linux desktops. My work covers Linux infrastructure, automation, networking, containers, and monitoring.
+
+I use Ansible daily and work with Ubuntu, Rocky Linux, VMware vSphere, pfSense, Docker, Podman, Prometheus, Grafana, and Loki. I enjoy investigating an operational problem, applying a change, and checking the result.
+
+I am moving toward DevOps, SRE, or Platform Engineering roles focused on infrastructure, automation, reliability, and observability. I am developing my Kubernetes skills through a Raspberry Pi release and recovery lab.
+
+I bring professional Linux and automation experience. My Kubernetes work is a lab project, and I am looking for a team where I continue developing delivery workflows and cloud skills.
+
+I am based in Prague and interested in local or hybrid roles, plus remote opportunities accepting candidates based in Czechia.
+
+Experience bullets ready for use now
+
+Current title: IT Lead. Company: 42 Prague. Keep your actual employment dates.
+
+• Reduced login time from about three minutes to 30 seconds through an NFS to iSCSI storage migration.
+
+• Manage roughly 25 servers and virtual machines across Ubuntu, Rocky Linux, and VMware vSphere, alongside 150 Linux desktops.
+
+• Use Ansible daily for infrastructure automation and configuration work across the Linux environment.
+
+• Work with Prometheus, Grafana, and Loki to monitor infrastructure and investigate operational issues.
+
+• Support network and container operations using pfSense, Docker, and Podman as part of the campus infrastructure.
+
+The first bullet contains a confirmed outcome. The other four show operational scope and responsibility. Add further outcomes only after you supply evidence for a specific automation, alert, outage, or security improvement. No invented time savings or availability percentages belong here.
+
+Project entry before implementation
+
+baremetal-platform-lab
+Kubernetes release and recovery lab, in development
+
+Planned Raspberry Pi 5 project focused on repeatable host preparation, versioned application releases, GitOps, monitoring, and recovery. The initial scope uses one physical node and existing SSD storage. Deployment and recovery measurements will follow completed exercises.
+
+Project entry after the relevant checks pass
+
+baremetal-platform-lab
+Kubernetes release and recovery lab
+
+Built an ARM64 lab on a Raspberry Pi 5 with SSD storage. Automated host preparation with Ansible and managed application configuration through Kustomize, GitHub Actions, and Flux.
+
+Tested a failed rollout, recovery through Git, configuration drift correction, and Pod replacement. Added Prometheus and Grafana monitoring and exercised alerting through Alertmanager.
+
+Restored K3s control plane state from an encrypted backup held on a separate computer. Published procedures, test conditions, and measured results in the repository.
+
+The project uses one physical host. Host failure stops the service. The restore exercise covers cluster state and application configuration.
+
+Use only sentences supported by completed checks. Add numeric deployment, detection, and recovery results from the evidence file after recording the conditions and repeat count. Do not use production, highly available, zero downtime, or enterprise grade as unsupported labels.
+
+Skills and Featured
+
+Prioritize these established skills: Linux, Ansible, Infrastructure Automation, System Administration, Prometheus, Grafana, VMware vSphere, Networking, Docker, Podman, Ubuntu, Rocky Linux, pfSense, and Loki. Keep Git in the list once you have reviewed your current practical use. Add Kubernetes, K3s, Kustomize, GitHub Actions, Flux, and GitOps as lab skills after corresponding milestones pass.
+
+Featured now: a short storage migration case study using the confirmed login times. Add the project repository once the README and first node check exist. Featured after completion: repository first, five minute demo second, measured recovery exercise third. Use public copies without workplace addresses, credentials, or internal screenshots.
+
+Banner concept: a plain dark or light background with two lines. Line one: Linux Infrastructure and Automation. Line two: Ansible | Reliability | Observability. After deployment and recovery checks pass, replace line two with Kubernetes Release and Recovery Lab. Keep text away from the left profile photo area. No employer logo or certification badge is needed.
