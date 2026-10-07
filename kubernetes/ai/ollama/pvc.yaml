@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-cache
+  namespace: ai-lab
+  labels:
+    app.kubernetes.io/name: ollama
+    app.kubernetes.io/part-of: baremetal-platform-lab
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      # Local-path records this request but does not enforce a disk quota.
+      storage: 20Gi
