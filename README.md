@@ -1,236 +1,194 @@
 # baremetal-platform-lab
 
-My Kubernetes lab on a Raspberry Pi 5. I'm building toward a small local AI service, with repeatable deployment, monitoring, and recovery tests.
+I run a small language model on a Raspberry Pi 5 and use this repository to manage the infrastructure around the service. The lab uses K3s, Ansible, Ollama, and Flux, with configuration checks in GitHub Actions.
 
-I started with Podinfo to check the cluster, networking, and rollout behavior. Those tests now work. The next step is running a small language model on the same cluster and measuring how the Pi handles inference.
+I started with Podinfo to learn how Kubernetes handles releases and failed changes. Podinfo stays in the lab as a simple test application. Ollama is the AI workload, running Qwen2.5 0.5B on the Pi's CPU.
 
-## What runs today
+## Current setup
 
-- Ubuntu Server 24.04.5 LTS on an ADATA SU650 USB SSD.
-- K3s `v1.36.5+k3s1`, installed through Ansible.
-- Two Podinfo replicas with health probes and resource limits.
-- A ClusterIP Service and Traefik Ingress at `podinfo.lab.test`.
-- Kubernetes Secrets encryption enabled.
+Status recorded on 8 October 2026.
 
-The second Ansible run reported zero changes. K3s and the node recovered after a reboot.
-
-Ollama, AI workloads, GitOps, CI, and the monitoring stack are still planned. The files and results in this repository describe the Kubernetes baseline so far.
-
-## The next workload: local inference
-
-I'll start with Ollama and `qwen2.5:0.5b`, running on the Pi's CPU. Ollama publishes ARM64 builds and a container image with CPU support. This model's listed download size is about 398 MB. Runtime memory will be higher and needs measuring.
-
-The first deployment will have:
-
-- One inference Pod in a separate namespace.
-- A pinned Ollama image and a recorded model digest.
-- An SSD-backed persistent volume for downloaded model files.
-- A ClusterIP Service, accessed from my workstation through port-forwarding.
-- Startup and health checks, plus a separate test proving the model answers a request.
-- Explicit CPU and memory settings.
-
-I'll begin with one loaded model, one request at a time, and a 2,048-token context. A 1 GiB memory request and 2 GiB limit are starting estimates. I'll adjust them using measurements and aim to keep at least 2 GiB available on the node. I'll budget 20 GiB of SSD space for the runtime image and model cache.
-
-These are initial settings, not measured requirements. The Pi has no dedicated AI accelerator in this setup. I'll record inference speed before trying a larger model.
-
-### What I'll test
-
-1. Send a fixed prompt and receive a complete response.
-2. Record the first request after loading the model, then repeat with the model already loaded.
-3. Record response time, generated tokens per second, CPU use, and memory use.
-4. Delete the inference Pod and confirm the replacement reuses the downloaded model files.
-5. Introduce a bad deployment change and recover through version-controlled configuration.
-6. Test a missing model and a request timeout, with clear errors in the client.
-7. Add monitoring and an alert for a failed inference check.
-
-I'll use a short Python client for the POST requests and results. The existing HTTP probe uses GET requests and will stay useful for the Podinfo tests.
-
-Ollama returns token counts and timing fields in API responses. Those fields will support the benchmark. Prometheus collection still needs a separate implementation.
-
-### A small assistant after inference works
-
-The next extension is a read-only lab assistant. A small script will fetch workload status using a namespace-scoped, read-only identity, send a filtered summary to the local model, and return an explanation.
-
-The first version will follow a fixed flow with one approved tool. I'll test with saved workload-status fixtures before connecting the live cluster. Cluster credentials and secrets stay out of the prompts. Any operational change stays manual.
-
-This adds tool use, request handling, and failure cases without introducing an agent framework before the model service works.
-
-## Hardware
-
-| Component | Current setup |
+| Component | Running configuration |
 | --- | --- |
-| Computer | Raspberry Pi 5, 8 GB RAM |
-| Storage | ADATA SU650 512 GB SATA SSD over USB |
-| Cooling | Active cooling case |
-| Network | Ethernet |
-| Operating system | Ubuntu Server 24.04.5 LTS, ARM64 |
-| Spare storage | 512 GB microSD card |
+| Host | Ubuntu Server 24.04.5 LTS, ARM64 |
+| Kubernetes | K3s `v1.36.5+k3s1`, one server using SQLite |
+| Host automation | Ansible playbook in `ansible/host.yml` |
+| Test application | Podinfo 6.15.0, two replicas in `platform-demo` |
+| Inference server | Ollama 0.40.0, one replica in `ai-lab` |
+| Model | `qwen2.5:0.5b`, 397 MB in the model list |
+| Model storage | `ollama-cache` PVC using `local-path`, requesting 20 GiB |
+| GitOps | Flux 2.9.6, tracking `main` |
+| CI | YAML, Ansible, Kustomize, Kubernetes schemas, script syntax, and JSONL checks |
 
-Ubuntu and K3s run from the SSD. The root filesystem is `/dev/sda2`, formatted as ext4.
+The hardware is a Raspberry Pi 5 with 8 GB RAM, active cooling, and an ADATA SU650 512 GB SATA SSD connected through a USB adapter. Ubuntu and K3s run from the SSD. The root filesystem is `/dev/sda2`, formatted as ext4. A 512 GB microSD card is spare storage.
 
-## Tests completed so far
+Prometheus, Grafana, alerting, backup restore, and the read-only assistant are still pending.
 
-On 7 October 2026, I tested:
+## Tests completed
 
-- Host preparation with Ansible. First run: `ok=23`, `changed=9`, `failed=0`. Second run: `ok=22`, `changed=0`, `failed=0`.
-- Reboot recovery. K3s returned to `active` and `pi-lab` returned to `Ready`.
-- A Podinfo update from 6.14.1 to 6.15.0.
-- A failed rollout using `/not-ready` as the readiness path. The new Pod stayed unready while two previous Pods stayed Ready. The Deployment reported `ProgressDeadlineExceeded`, and an HTTP check returned 200.
-- Recovery by restoring the working manifest from Git and running `kubectl apply`.
-- Pod replacement. Kubernetes recreated a deleted Pod, and the HTTP check after replacement returned 200.
+### Cluster and releases
 
-The rolling update used `maxUnavailable: 0` and `maxSurge: 1`. Readiness kept the broken new Pod out of the Service's ready endpoints.
+- The first Ansible run reported `ok=23`, `changed=9`, and `failed=0`. The second reported `ok=22`, `changed=0`, and `failed=0`.
+- After a reboot, K3s returned to `active` and the node returned to `Ready`.
+- Podinfo updated from 6.14.1 to 6.15.0 with a rolling update.
+- An invalid readiness path left the new Pod unready while two previous Pods stayed Ready. The Deployment reported `ProgressDeadlineExceeded`, and an Ingress check returned HTTP 200.
+- I restored the working manifest from Git and applied the change manually. This test happened before Flux installation.
+- Kubernetes replaced a deleted Podinfo Pod. The HTTP check after replacement returned 200.
 
-I haven't measured deployment time, recovery time, or continuous HTTP failures yet. The successful curl checks are individual observations, not a zero-downtime result. Git recovery was manual. A controller has not reconciled the deployment yet.
+The Podinfo rollout uses `maxUnavailable: 0` and `maxSurge: 1`. I have not recorded continuous HTTP traffic during these tests, so the successful checks do not establish zero downtime.
 
-The full record is in [initial cluster evidence](docs/evidence/2026-10-07-initial-cluster.md).
+[Initial cluster and release evidence](docs/evidence/2026-10-07-initial-cluster.md).
 
-## Reproducing the current Kubernetes setup
+### Local inference and model persistence
 
-The commands below reproduce the existing Podinfo baseline. AI deployment manifests will follow in a separate change.
+Ollama answered requests through a workstation port-forward. The probe used a 2,048-token context, a 64-token output limit, two CPU threads, and no GPU. Requests ran sequentially with streaming disabled, temperature `0`, seed `7`, and a five-minute model keep-alive.
 
-Start with Ubuntu Server 24.04 LTS ARM64 booting from the SSD, SSH key access, and sudo access. The workstation needs Ansible and kubectl. Read [the bootstrap runbook](docs/runbooks/bootstrap.md) before running the playbook.
+| Request | Model loaded before request | Complete response time | Output tokens | Generation tokens/second |
+| --- | --- | --- | --- | --- |
+| First request | No | 4.4195 s | 27 | 24.387 |
+| Loaded-model request 1 | Yes | 1.7685 s | 37 | 23.200 |
+| Loaded-model request 2 | Yes | 1.7113 s | 37 | 23.147 |
+| After Pod replacement | No | 4.3745 s | 27 | 25.045 |
+| After reboot | No | 5.3925 s | 27 | 23.491 |
 
-### Prepare the host
+These are individual measurements from one short prompt. Response time covers the complete generation request. Generation speed excludes model loading. I have not measured time to first token or concurrent throughput.
 
-From the repository root, create an inventory for a new setup:
+The first answer incorrectly described readiness as a check of the whole cluster. I kept the original responses in the evidence files. Successful inference proves the serving path works, not answer accuracy.
 
-```bash
-cp ansible/inventory.example.ini ansible/inventory.ini
-```
-
-Edit the Pi address, user, and SSH key path. Keep an existing working inventory rather than copying over the file.
-
-```bash
-ansible-playbook -i ansible/inventory.ini ansible/host.yml --syntax-check
-ansible-playbook -i ansible/inventory.ini ansible/host.yml
-```
-
-The tested `lab` user has passwordless sudo. Add `--ask-become-pass` when the chosen user needs a sudo password.
-
-The playbook pins the K3s release, prepares host networking, and enables Secrets encryption. The server uses SQLite. The playbook checks for an existing installation and refuses to adopt an unrelated cluster or change the installed version.
-
-Keep `ansible/inventory.ini` outside Git. The repository includes an example inventory.
-
-### Connect from the workstation
-
-These examples use the lab's current address. Change the address and SSH key path for another setup.
-
-```bash
-PI_ADDRESS=10.0.1.16
-ssh -i ~/.ssh/pi_lab_ed25519 lab@"${PI_ADDRESS}" 'sudo k3s kubectl get nodes -o wide'
-```
-
-For first-time kubectl access, copy the kubeconfig outside the repository. Keep an existing working copy unchanged.
-
-```bash
-PI_ADDRESS=10.0.1.16
-mkdir -p ~/.kube
-(
-  umask 077
-  ssh -i ~/.ssh/pi_lab_ed25519 lab@"${PI_ADDRESS}" 'sudo cat /etc/rancher/k3s/k3s.yaml' > ~/.kube/pi-lab.yaml
-)
-sed -i "s/127.0.0.1/${PI_ADDRESS}/g" ~/.kube/pi-lab.yaml
-chmod 600 ~/.kube/pi-lab.yaml
-export KUBECONFIG="$HOME/.kube/pi-lab.yaml"
-kubectl get nodes -o wide
-```
-
-This kubeconfig grants cluster admin access. Keep the file and private SSH key out of Git.
-
-### Deploy and check Podinfo
-
-Create the namespace before the server-side dry run. A dry-run namespace is not saved for the other resources.
-
-```bash
-kubectl apply -f kubernetes/base/namespace.yaml
-kubectl apply --dry-run=server -k kubernetes/overlays/pi
-kubectl apply -k kubernetes/overlays/pi
-kubectl rollout status deployment/podinfo -n platform-demo --timeout=180s
-```
-
-Add the following entry to the workstation's `/etc/hosts` file:
+After deleting the Ollama Pod, the replacement listed the same model and completed another inference request without a new model pull. The model also remained available after restarting the Pi. The recorded digest was:
 
 ```text
-10.0.1.16 podinfo.lab.test
+a8b0c51577010a279d933d14c2a8ab4b268079d44c5c8830c0a93900f1827c67
 ```
 
-Then check the workload and endpoints:
+A snapshot after the first request showed 656 MiB for the Ollama container and 6.0 GiB available on the host. This reading predates Flux installation and does not measure peak inference memory.
+
+[Inference and Pod replacement evidence](docs/evidence/2026-10-07-ollama.md). [Request after reboot](docs/evidence/ollama-after-reboot.jsonl).
+
+### CI failure and recovery
+
+I added an unsupported `replicaz` field to a Podinfo Deployment on a test branch. The pull request failed Kubernetes schema validation. After removing the field, the next run passed. I closed the test PR without merging.
+
+- [Failed validation](https://github.com/DavidBenitoCampo/baremetal-platform-lab/actions/runs/37781585707).
+- [Validation after the fix](https://github.com/DavidBenitoCampo/baremetal-platform-lab/actions/runs/37782406906).
+- [Passing GitOps configuration commit](https://github.com/DavidBenitoCampo/baremetal-platform-lab/actions/runs/37823383476).
+
+The current workflow validates both application paths. Flux CRD schemas and the `clusters/` configuration are not included in these CI checks yet. CI uses no Pi credentials and makes no connection to the cluster.
+
+### Flux reconciliation
+
+Flux fetched and applied commit `16f31794b8844fdf240eb301fdfc8c39e3f03047`. The `flux-system`, `podinfo`, and `ollama` Kustomizations all reported `READY=True`, with no suspension.
+
+Podinfo and Ollama each passed their Deployment health check. Ollama's health probe checks the HTTP server. The separate inference probe verifies a model response.
+
+The manual drift correction exercise is the next test. Recovery from a bad release through Flux has not been tested yet.
+
+## How Git controls the cluster
+
+Flux reads this repository using a GitHub deploy key with read-only access. The bootstrap credentials stay outside Git.
+
+| Flux Kustomization | Repository path | Purpose |
+| --- | --- | --- |
+| `flux-system` | `clusters/pi` | Flux configuration and application reconciliation definitions |
+| `podinfo` | `kubernetes/overlays/pi` | Podinfo manifests and Pi replica patch |
+| `ollama` | `kubernetes/ai/ollama` | Inference Deployment, Service, model volume, and network policy |
+
+The Git source polls once per minute. Each application reconciliation also has a one-minute interval. The root `flux-system` reconciliation has a ten-minute interval and also reacts to new Git revisions.
+
+Kustomize builds the application YAML from each folder's `kustomization.yaml`. Flux then applies the result and checks the named Deployment. Pruning is enabled, so removing a managed resource from Git also removes the resource from the cluster. The Ollama PVC and namespace need care because deleting either would affect stored models.
+
+CI and Flux run independently. Flux does not wait for a green GitHub Actions run before applying changes on `main`. Adding a required-check pull request workflow is future work.
+
+## Checking the running lab
+
+Run these commands on the workstation. The kubeconfig lives outside the repository and grants admin access to the Pi cluster.
 
 ```bash
-kubectl get deployment,service,pdb -n platform-demo
-kubectl get pods -n platform-demo -o wide
+export KUBECONFIG="$HOME/.kube/pi-lab.yaml"
+
+kubectl get nodes
+flux get sources git -A
+flux get kustomizations -A
+kubectl get deployment,pods -n platform-demo
+kubectl get deployment,pods,pvc -n ai-lab
+```
+
+Podinfo uses Traefik Ingress. The workstation's `/etc/hosts` contains `10.0.1.16 podinfo.lab.test`.
+
+```bash
 curl -i http://podinfo.lab.test/readyz
 curl -s http://podinfo.lab.test/version
-curl -s http://podinfo.lab.test/metrics | head
 ```
 
-The expected baseline is two Ready Pods, HTTP 200 from `/readyz`, and version 6.15.0. This endpoint currently uses HTTP on the lab network.
-
-## Measuring the next rollout
-
-I'll run the existing probe from my workstation during the next Podinfo rollout. This example makes 600 requests at one-second intervals with a 0.8-second timeout:
+Ollama uses a ClusterIP Service. Open a second terminal and keep this port-forward running:
 
 ```bash
-python3 scripts/http_probe.py http://10.0.1.16/version --host podinfo.lab.test --count 600 --interval 1 --timeout 0.8 > docs/evidence/release-probe.jsonl
+export KUBECONFIG="$HOME/.kube/pi-lab.yaml"
+kubectl port-forward -n ai-lab service/ollama 11435:11434 --address=127.0.0.1
 ```
 
-The log includes HTTP status, errors, latency, and timestamps. I'll retain the full log and record when the change starts and when recovery finishes. No results exist for this measurement yet.
+Back in the repository terminal, check the model list and send a request:
 
-For inference, I'll record the prompt, model digest, context size, output limit, and whether the model was already loaded. Comparing requests under the same conditions will make the results useful.
+```bash
+kubectl exec -n ai-lab deployment/ollama -- ollama list
+python3 scripts/inference_probe.py --url http://127.0.0.1:11435 --count 1
+```
 
-## Limits and recovery
+The client prints one JSON record per request. Review `ok`, `http_status`, the response text, model digest, and timings. Restart the port-forward after a Pod replacement.
 
-Everything runs on one Pi. A host, power, or USB SSD failure stops the cluster. Two Podinfo replicas handle some Pod-level failures, but both depend on the same machine. The inference service will start with one replica and accept downtime during updates.
+## Setup and operating procedures
 
-The model volume survives Pod replacement while the underlying SSD and volume remain intact. Local storage provides no copy on another machine. Monitoring on the Pi will share the same host failure.
+For a fresh build, start with [host bootstrap](docs/runbooks/bootstrap.md), then read the [Ollama setup](kubernetes/ai/ollama/README.md) and [official Flux GitHub bootstrap procedure](https://fluxcd.io/flux/installation/bootstrap/github/). The local Ansible inventory contains the Pi address, user, and SSH key path and stays untracked.
 
-The first backup exercise will cover K3s state, required credentials, and configuration. The destination needs independent storage on an existing computer. I'll document how to download and verify the chosen model again. Model weights will be treated as a cache rather than included in the first backup.
+For the running cluster, change the manifests in Git. Use the [Flux runbook](docs/runbooks/flux.md) for reconciliation, status checks, and the planned drift exercise.
 
-GPU scheduling, model training, distributed inference, and production high availability are outside this version. A production service would need separate failure domains, suitable compute, independent monitoring, and tested off-host recovery.
+## Access and resource settings
 
-## Repository layout
+- SSH uses key authentication. The admin kubeconfig stays outside Git with mode `600`.
+- K3s encrypts Kubernetes Secrets at rest.
+- Ollama runs as UID 1000, with no service account token mounted, a read-only root filesystem, dropped Linux capabilities, and privilege escalation disabled.
+- Ollama requests one CPU and 1 GiB memory, with limits of two CPUs and 2 GiB. The server permits one loaded model and one parallel request.
+- The network policy declares denied Pod-network ingress to Ollama. Its enforcement test is pending. Administrative access currently uses the localhost port-forward.
+- Container images use version tags. Immutable image digest pinning is pending. The inference logs record the model digest.
+
+Flux currently uses the cluster permissions created by bootstrap. Namespace-scoped reconciliation identities are pending. Repository write access therefore matters: changes on `main` become cluster configuration.
+
+## Storage and reliability limits
+
+All workloads and Flux run on one Pi. Two Podinfo replicas help with Pod replacement and rolling updates, but both depend on the same host. Ollama has one replica and uses `Recreate`, accepting interruption during updates.
+
+The local model volume survived Pod replacement and reboot. This provides no independent copy of the data. A Pi, power, or USB SSD failure stops the cluster. The `20Gi` PVC request does not enforce a disk quota with this local-path provisioner.
+
+The first backup exercise will cover K3s state, required credentials, and configuration on an existing computer with independent storage. The backup destination and restore procedure still need verification. Model files will be treated as a cache and downloaded again. Application data, monitoring history, and OS reimaging are outside this first restore scope.
+
+Monitoring installed on the Pi will share the same failure point. A production design would need compute sized for the models, separate failure domains, independent monitoring, restricted identities, and tested external backups.
+
+## Repository guide
 
 - `ansible/`: host preparation and K3s configuration.
-- `kubernetes/`: current Podinfo manifests and Pi overlay.
-- `clusters/pi/`: GitOps resources once added.
-- `monitoring/`: monitoring notes, with configuration still to follow.
-- `scripts/`: preflight and HTTP checks. The inference client will live here too.
-- `.github/workflows/`: CI notes. Executable validation still needs adding.
-- `docs/`: decisions, runbooks, incident reports, and test results.
-- `versions.yaml`: component version reference.
+- `kubernetes/base/` and `kubernetes/overlays/pi/`: Podinfo and the Pi overlay.
+- `kubernetes/ai/ollama/`: inference server and model cache manifests.
+- `clusters/pi/`: Flux bootstrap files and application reconciliations.
+- `.github/workflows/` and `ci/`: validation workflow and tool settings.
+- `scripts/`: host preflight, HTTP checks, and the inference probe.
+- `docs/`: evidence, decisions, runbooks, and incident templates.
+- `monitoring/`: notes for the next monitoring milestone.
+- `versions.yaml`: version reference, including proposed components. This file is not a list of everything deployed.
 
-AI manifests will be added under `kubernetes/` in a separate namespace.
+## Next work
 
-Useful records:
+I have four hours a week for the lab. The next pieces are:
 
-- [Bootstrap runbook](docs/runbooks/bootstrap.md)
-- [Single-node decision](docs/adr/001-single-node.md)
-- [SSD decision](docs/adr/002-ssd.md)
-- [Initial test results](docs/evidence/2026-10-07-initial-cluster.md)
-- [Incident template](docs/incidents/failed-rollout-template.md)
-- [Measurement template](docs/evidence/result-template.md)
-
-## Next changes
-
-I have four hours a week for this project, so I'll add one working piece at a time.
-
-1. Measure current node memory, CPU use, and free SSD space.
-2. Deploy Ollama and the small model, then complete the inference and Pod replacement tests.
-3. Add CI and one GitOps controller. Test correction of a manual configuration change.
-4. Add Prometheus and Grafana, then test an inference failure alert.
-5. Run the independent backup and restore exercise.
-6. Add the read-only assistant once the serving and recovery work is documented.
+1. Record Flux drift correction and a failed rollout recovered through Git, including elapsed time and HTTP checks.
+2. Extend CI to validate Flux resources and require passing checks before merging.
+3. Measure peak inference CPU and memory, record container image digests, and test missing-model and timeout errors.
+4. Add Prometheus and Grafana, then test an alert for a failed inference request.
+5. Complete the backup and restore exercise using independent storage.
+6. Build a small read-only assistant with one approved status-reading tool, a scoped identity, and saved test fixtures. Operational changes stay manual.
 
 ## References
 
-The Kubernetes sources are collected in [sources.md](docs/sources.md).
-
-AI references checked on 7 October 2026:
-
-- [Ollama ARM64 installation](https://docs.ollama.com/linux)
-- [Ollama CPU container setup](https://docs.ollama.com/docker)
-- [Official container tags and architectures](https://hub.docker.com/r/ollama/ollama/tags)
-- [Qwen2.5 0.5B model](https://ollama.com/library/qwen2.5:0.5b)
-- [Ollama context and concurrency settings](https://docs.ollama.com/faq)
-- [Ollama API timing and token counts](https://docs.ollama.com/api/usage)
+- [Single-node decision](docs/adr/001-single-node.md) and [SSD decision](docs/adr/002-ssd.md).
+- [Technical sources](docs/sources.md).
+- [Flux Kustomizations](https://fluxcd.io/flux/components/kustomize/kustomizations/) and [Git sources](https://fluxcd.io/flux/components/source/gitrepositories/), checked 8 October 2026.
+- [Ollama API timings](https://docs.ollama.com/api/usage), checked 8 October 2026.
