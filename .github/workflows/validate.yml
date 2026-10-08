@@ -1,0 +1,105 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+    env:
+      KUBECTL_VERSION: v1.36.5
+      KUBECTL_SHA256: 33bc88a24c3b09cf55bfd59e6ca977881b61fc3f25ab65bc80c65b430248648e
+      KUBECONFORM_VERSION: v0.8.0
+      KUBECONFORM_SHA256: 9bc2bffbf71f261128533edaf912153948b7ff238f9a531ae6d34466ec287883
+      KUBERNETES_SCHEMA_VERSION: '1.36.0'
+      KUBERNETES_SCHEMA_REVISION: 39a87cd29966bc0b3434e8cfbc2061782c8cb69a
+      PIP_DISABLE_PIP_VERSION_CHECK: '1'
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Python tools
+        run: |
+          python3.12 -m venv "$RUNNER_TEMP/ci-venv"
+          "$RUNNER_TEMP/ci-venv/bin/python" -m pip install -r ci/requirements.txt
+          printf '%s\n' "$RUNNER_TEMP/ci-venv/bin" >> "$GITHUB_PATH"
+
+      - name: Install Kubernetes validators
+        run: |
+          tool_directory="$RUNNER_TEMP/ci-bin"
+          mkdir -p "$tool_directory"
+          curl --fail --location --retry 3 --max-time 180 \
+            "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl" \
+            -o "$tool_directory/kubectl"
+          printf '%s  %s\n' "$KUBECTL_SHA256" "$tool_directory/kubectl" | sha256sum --check
+          curl --fail --location --retry 3 --max-time 180 \
+            "https://github.com/yannh/kubeconform/releases/download/$KUBECONFORM_VERSION/kubeconform-linux-amd64.tar.gz" \
+            -o "$RUNNER_TEMP/kubeconform.tar.gz"
+          printf '%s  %s\n' "$KUBECONFORM_SHA256" "$RUNNER_TEMP/kubeconform.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/kubeconform.tar.gz" -C "$tool_directory" kubeconform
+          chmod 0755 "$tool_directory/kubectl"
+          printf '%s\n' "$tool_directory" >> "$GITHUB_PATH"
+
+      - name: Check YAML
+        run: yamllint --strict -c ci/yamllint.yaml .github/workflows ansible kubernetes ci versions.yaml
+
+      - name: Check Ansible syntax
+        run: ansible-playbook -i ansible/inventory.example.ini ansible/host.yml --syntax-check
+
+      - name: Render both applications
+        run: |
+          mkdir -p "$RUNNER_TEMP/manifests"
+          kubectl kustomize kubernetes/overlays/pi > "$RUNNER_TEMP/manifests/podinfo.yaml"
+          kubectl kustomize kubernetes/ai/ollama > "$RUNNER_TEMP/manifests/ollama.yaml"
+
+      - name: Validate Kubernetes fields
+        run: |
+          schema_location="https://raw.githubusercontent.com/yannh/kubernetes-json-schema/$KUBERNETES_SCHEMA_REVISION"
+          schema_location+='/{{.NormalizedKubernetesVersion}}-standalone{{.StrictSuffix}}/{{.ResourceKind}}{{.KindSuffix}}.json'
+          kubeconform -strict -summary \
+            -kubernetes-version "$KUBERNETES_SCHEMA_VERSION" \
+            -schema-location "$schema_location" \
+            "$RUNNER_TEMP/manifests/podinfo.yaml" "$RUNNER_TEMP/manifests/ollama.yaml"
+
+      - name: Check Python syntax
+        run: python -m compileall -q scripts
+
+      - name: Check shell syntax
+        run: bash -n scripts/preflight.sh
+
+      - name: Check evidence JSONL
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          for path in sorted(Path("docs/evidence").glob("*.jsonl")):
+              count = 0
+              for number, line in enumerate(path.read_text().splitlines(), start=1):
+                  if not line.strip():
+                      raise ValueError(f"{path}:{number}: empty JSONL record")
+                  try:
+                      json.loads(line)
+                  except json.JSONDecodeError as error:
+                      raise ValueError(f"{path}:{number}: {error}") from error
+                  count += 1
+              if count == 0:
+                  raise ValueError(f"{path}: empty evidence file")
+              print(f"{path}: {count} valid JSON records")
+          PY
