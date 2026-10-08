@@ -7,7 +7,6 @@ metadata:
     app.kubernetes.io/name: podinfo
     app.kubernetes.io/part-of: baremetal-platform-lab
 spec:
-  replicaz: 2
   replicas: 1
   revisionHistoryLimit: 3
   minReadySeconds: 5
