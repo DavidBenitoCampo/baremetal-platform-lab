@@ -177,8 +177,6 @@ Monitoring installed on the Pi will share the same failure point. A production d
 
 ## Next work
 
-I have four hours a week for the lab. The next pieces are:
-
 1. Record Flux drift correction and a failed rollout recovered through Git, including elapsed time and HTTP checks.
 2. Extend CI to validate Flux resources and require passing checks before merging.
 3. Measure peak inference CPU and memory, record container image digests, and test missing-model and timeout errors.
