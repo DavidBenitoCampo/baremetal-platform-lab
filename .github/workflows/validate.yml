@@ -27,6 +27,8 @@ jobs:
       KUBECONFORM_SHA256: 9bc2bffbf71f261128533edaf912153948b7ff238f9a531ae6d34466ec287883
       KUBERNETES_SCHEMA_VERSION: '1.36.0'
       KUBERNETES_SCHEMA_REVISION: 39a87cd29966bc0b3434e8cfbc2061782c8cb69a
+      PROMETHEUS_VERSION: v3.15.0-distroless
+      PROMETHEUS_IMAGE_SHA256: beada036928d627c486ea5a118f0ceae4c23d42a7d714b9f446608a34fa9b137
       PIP_DISABLE_PIP_VERSION_CHECK: '1'
     steps:
       - name: Check out the repository
@@ -57,16 +59,20 @@ jobs:
           printf '%s\n' "$tool_directory" >> "$GITHUB_PATH"
 
       - name: Check YAML
-        run: yamllint --strict -c ci/yamllint.yaml .github/workflows ansible kubernetes ci versions.yaml
+        run: |
+          yamllint --strict -c ci/yamllint.yaml \
+            .github/workflows ansible kubernetes ci versions.yaml \
+            monitoring/prometheus clusters/pi/monitoring.yaml
 
       - name: Check Ansible syntax
         run: ansible-playbook -i ansible/inventory.example.ini ansible/host.yml --syntax-check
 
-      - name: Render both applications
+      - name: Render applications and monitoring
         run: |
           mkdir -p "$RUNNER_TEMP/manifests"
           kubectl kustomize kubernetes/overlays/pi > "$RUNNER_TEMP/manifests/podinfo.yaml"
           kubectl kustomize kubernetes/ai/ollama > "$RUNNER_TEMP/manifests/ollama.yaml"
+          kubectl kustomize monitoring/prometheus > "$RUNNER_TEMP/manifests/monitoring.yaml"
 
       - name: Validate Kubernetes fields
         run: |
@@ -75,7 +81,18 @@ jobs:
           kubeconform -strict -summary \
             -kubernetes-version "$KUBERNETES_SCHEMA_VERSION" \
             -schema-location "$schema_location" \
-            "$RUNNER_TEMP/manifests/podinfo.yaml" "$RUNNER_TEMP/manifests/ollama.yaml"
+            "$RUNNER_TEMP/manifests/podinfo.yaml" \
+            "$RUNNER_TEMP/manifests/ollama.yaml" \
+            "$RUNNER_TEMP/manifests/monitoring.yaml"
+
+      - name: Check Prometheus configuration
+        run: |
+          prometheus_image="ghcr.io/prometheus/prometheus:$PROMETHEUS_VERSION"
+          prometheus_image+="@sha256:$PROMETHEUS_IMAGE_SHA256"
+          docker run --rm --read-only --network=none \
+            --entrypoint=/bin/promtool \
+            --volume "$GITHUB_WORKSPACE/monitoring/prometheus:/work:ro" \
+            "$prometheus_image" check config /work/prometheus.yml
 
       - name: Check Python syntax
         run: python -m compileall -q scripts
