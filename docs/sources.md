@@ -2,11 +2,6 @@
 
 Retrieved 2 October 2026 in Europe/Prague.
 
-- [J1 Meiro Platform Engineer Operations and Reliability](https://www.meiro.io/career/platform-engineer-operations-and-reliability/)
-- [J2 PLG Group DevOps Engineer](https://www.startupjobs.cz/nabidka/107965/devops-engineer)
-- [J3 Deutsche Börse Cloud DevOps Engineer](https://careers.deutsche-boerse.com/offer/cloud-devops-engineer-f-m-d/8004d09e-65cd-4bf8-9cd9-03c38ccd274b)
-- [J4 Canonical Site Reliability Engineer](https://canonical.com/careers/4468036)
-- [P1 Public LinkedIn profile indexed by search](https://cz.linkedin.com/in/davidbenitocampo)
 - [T1 K3s requirements](https://docs.k3s.io/installation/requirements)
 - [T2 K3s releases](https://github.com/k3s-io/k3s/releases)
 - [T3 Flux installation and Kubernetes compatibility](https://fluxcd.io/flux/installation/)
