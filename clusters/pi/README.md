@@ -1,9 +1,18 @@
-# GitOps configuration planned
+# Flux configuration for pi-lab
 
-Week 6 adds Flux bootstrap under flux-system/ and separate infrastructure and
-application Kustomizations. Use source-controller and kustomize-controller.
-Apply dependencies and a scoped service account for application reconciliation.
+Flux watches the `main` branch of this repository and reconciles `clusters/pi`.
+The generated `flux-system/` directory installs Flux and defines its Git source.
 
-Bootstrap through a temporary privately entered GitHub token.
-Ongoing Git access uses a read only deploy key.
-CI has no kubeconfig and no network connection to the Pi.
+`apps.yaml` defines two application reconciliations:
+
+- `podinfo` renders `kubernetes/overlays/pi`.
+- `ollama` renders `kubernetes/ai/ollama`.
+
+Both reconcile once per minute, prune resources removed from their declared path,
+and wait for the named Deployment to become healthy. Flux runs with the cluster
+permissions created during bootstrap. This is appropriate for one administrator
+and one lab cluster. A shared production cluster would use scoped identities and
+separate repositories or paths.
+
+Use `flux get kustomizations -A` to inspect reconciliation state. See
+`docs/runbooks/flux.md` for normal checks and the drift exercise.
