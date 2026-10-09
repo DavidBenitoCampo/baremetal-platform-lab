@@ -1,0 +1,1 @@
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"kube_pod_container_status_restarts_total","container":"ollama","instance":"kube-state-metrics.monitoring.svc.cluster.local:8080","job":"kube-state-metrics","namespace":"ai-lab","pod":"ollama-76f6f79d6-zxmpt","uid":"4d4a73d7-ecf6-4ade-82e8-ee5f9119bd7c"},"value":[1791563047.124,"1"]}]}}
