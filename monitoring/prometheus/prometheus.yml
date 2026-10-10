@@ -5,7 +5,7 @@ global:
   external_labels:
     cluster: pi-lab
 
-rules_files:
+rule_files:
   - alerts.yml
 
 scrape_configs:
