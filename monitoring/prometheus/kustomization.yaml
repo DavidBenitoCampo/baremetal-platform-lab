@@ -19,11 +19,9 @@ configMapGenerator:
     namespace: monitoring
     files:
       - prometheus.yml
+      - alerts.yml
 
   - name: grafana-dashboard
     namespace: monitoring
     files:
       - grafana-dashboard.json
-
-generatorOptions:
-  disableNameSuffixHash: true

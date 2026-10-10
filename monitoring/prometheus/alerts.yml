@@ -1,0 +1,17 @@
+groups:
+  - name: platform-lab
+    rules:
+      - alert: PodinfoUnavailable
+        expr: >-
+          kube_deployment_status_replicas_available{
+            namespace="platform-demo",
+            deployment="podinfo"
+          } == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Podinfo has no available replicas"
+          description: >-
+            Podinfo in platform-demo has reported zero available
+            replicas for at least one minute.
