@@ -1,0 +1,10 @@
+2026-10-10T22:51:28Z
+NAME   	REVISION          	SUSPENDED	READY	MESSAGE                              
+podinfo	main@sha1:9ae8116e	False    	True 	Applied revision: main@sha1:9ae8116e	
+NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/podinfo   2/2     2            2           3d7h
+
+NAME                          READY   STATUS    RESTARTS   AGE
+pod/podinfo-f6556bc69-6vt7m   1/1     Running   0          5m54s
+pod/podinfo-f6556bc69-wqgsg   1/1     Running   0          5m54s
+Podinfo HTTP status: 200
