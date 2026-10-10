@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-provider
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/part-of: baremetal-platform-lab
+data:
+  dashboardproviders.yaml: |
+    apiVersion: 1
+
+    providers:
+      - name: platform-lab
+        orgId: 1
+        folder: Platform Lab
+        type: file
+        disableDeletion: false
+        updateIntervalSeconds: 30
+        allowUiUpdates: false
+        options:
+          path: /var/lib/grafana/dashboards

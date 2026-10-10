@@ -1,5 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
 resources:
   - namespace.yaml
   - rbac.yaml
@@ -7,8 +8,22 @@ resources:
   - prometheus.yaml
   - kube-state-metrics.yaml
   - networkpolicy.yaml
+  - grafana-pvc.yaml
+  - grafana-datasource.yaml
+  - grafana-dashboard-provider.yaml
+  - grafana-deployment.yaml
+  - grafana-service.yaml
+
 configMapGenerator:
   - name: prometheus-config
     namespace: monitoring
     files:
       - prometheus.yml
+
+  - name: grafana-dashboard
+    namespace: monitoring
+    files:
+      - grafana-dashboard.json
+
+generatorOptions:
+  disableNameSuffixHash: true
