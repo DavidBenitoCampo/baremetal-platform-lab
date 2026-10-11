@@ -188,5 +188,5 @@ Monitoring installed on the Pi will share the same failure point. A production d
 
 - [Single-node decision](docs/adr/001-single-node.md) and [SSD decision](docs/adr/002-ssd.md).
 - [Technical sources](docs/sources.md).
-- [Flux Kustomizations](https://fluxcd.io/flux/components/kustomize/kustomizations/) and [Git sources](https://fluxcd.io/flux/components/source/gitrepositories/), checked 8 October 2026.
-- [Ollama API timings](https://docs.ollama.com/api/usage), checked 8 October 2026.
+- [Flux Kustomizations](https://fluxcd.io/flux/components/kustomize/kustomizations/) and [Git sources](https://fluxcd.io/flux/components/source/gitrepositories/)
+- [Ollama API timings](https://docs.ollama.com/api/usage)
