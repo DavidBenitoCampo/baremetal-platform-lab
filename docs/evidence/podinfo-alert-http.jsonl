@@ -1,0 +1,241 @@
+{"type": "sample", "index": 0, "utc": "2026-10-10T22:42:48.730477+00:00", "status": 200, "ok": true, "latency_ms": 28.2, "schedule_delay_ms": 0.07, "error": null}
+{"type": "sample", "index": 1, "utc": "2026-10-10T22:42:49.730511+00:00", "status": 200, "ok": true, "latency_ms": 10.47, "schedule_delay_ms": 0.1, "error": null}
+{"type": "sample", "index": 2, "utc": "2026-10-10T22:42:50.730497+00:00", "status": 200, "ok": true, "latency_ms": 5.94, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 3, "utc": "2026-10-10T22:42:51.730488+00:00", "status": 200, "ok": true, "latency_ms": 6.0, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 4, "utc": "2026-10-10T22:42:52.730492+00:00", "status": 200, "ok": true, "latency_ms": 5.82, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 5, "utc": "2026-10-10T22:42:53.730492+00:00", "status": 200, "ok": true, "latency_ms": 5.06, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 6, "utc": "2026-10-10T22:42:54.730486+00:00", "status": 200, "ok": true, "latency_ms": 8.21, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 7, "utc": "2026-10-10T22:42:55.730500+00:00", "status": 200, "ok": true, "latency_ms": 5.12, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 8, "utc": "2026-10-10T22:42:56.730490+00:00", "status": 200, "ok": true, "latency_ms": 6.41, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 9, "utc": "2026-10-10T22:42:57.730486+00:00", "status": 200, "ok": true, "latency_ms": 4.94, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 10, "utc": "2026-10-10T22:42:58.730493+00:00", "status": 200, "ok": true, "latency_ms": 5.14, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 11, "utc": "2026-10-10T22:42:59.730525+00:00", "status": 200, "ok": true, "latency_ms": 9.25, "schedule_delay_ms": 0.11, "error": null}
+{"type": "sample", "index": 12, "utc": "2026-10-10T22:43:00.730444+00:00", "status": 200, "ok": true, "latency_ms": 5.06, "schedule_delay_ms": 0.04, "error": null}
+{"type": "sample", "index": 13, "utc": "2026-10-10T22:43:01.730507+00:00", "status": 200, "ok": true, "latency_ms": 5.98, "schedule_delay_ms": 0.1, "error": null}
+{"type": "sample", "index": 14, "utc": "2026-10-10T22:43:02.730508+00:00", "status": 200, "ok": true, "latency_ms": 8.18, "schedule_delay_ms": 0.1, "error": null}
+{"type": "sample", "index": 15, "utc": "2026-10-10T22:43:03.730498+00:00", "status": 200, "ok": true, "latency_ms": 5.53, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 16, "utc": "2026-10-10T22:43:04.730491+00:00", "status": 200, "ok": true, "latency_ms": 5.18, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 17, "utc": "2026-10-10T22:43:05.730518+00:00", "status": 200, "ok": true, "latency_ms": 4.93, "schedule_delay_ms": 0.11, "error": null}
+{"type": "sample", "index": 18, "utc": "2026-10-10T22:43:06.730505+00:00", "status": 200, "ok": true, "latency_ms": 5.24, "schedule_delay_ms": 0.1, "error": null}
+{"type": "sample", "index": 19, "utc": "2026-10-10T22:43:07.730490+00:00", "status": 503, "ok": false, "latency_ms": 8.87, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 20, "utc": "2026-10-10T22:43:08.730545+00:00", "status": 503, "ok": false, "latency_ms": 19.97, "schedule_delay_ms": 0.12, "error": "Service Unavailable"}
+{"type": "sample", "index": 21, "utc": "2026-10-10T22:43:09.730507+00:00", "status": 503, "ok": false, "latency_ms": 4.53, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 22, "utc": "2026-10-10T22:43:10.730492+00:00", "status": 503, "ok": false, "latency_ms": 20.85, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 23, "utc": "2026-10-10T22:43:11.730503+00:00", "status": 503, "ok": false, "latency_ms": 4.07, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 24, "utc": "2026-10-10T22:43:12.730524+00:00", "status": 503, "ok": false, "latency_ms": 20.32, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 25, "utc": "2026-10-10T22:43:13.730502+00:00", "status": 503, "ok": false, "latency_ms": 19.59, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 26, "utc": "2026-10-10T22:43:14.730490+00:00", "status": 503, "ok": false, "latency_ms": 6.53, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 27, "utc": "2026-10-10T22:43:15.730495+00:00", "status": 503, "ok": false, "latency_ms": 18.81, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 28, "utc": "2026-10-10T22:43:16.730529+00:00", "status": 503, "ok": false, "latency_ms": 4.35, "schedule_delay_ms": 0.12, "error": "Service Unavailable"}
+{"type": "sample", "index": 29, "utc": "2026-10-10T22:43:17.730529+00:00", "status": 503, "ok": false, "latency_ms": 8.06, "schedule_delay_ms": 0.12, "error": "Service Unavailable"}
+{"type": "sample", "index": 30, "utc": "2026-10-10T22:43:18.730491+00:00", "status": 503, "ok": false, "latency_ms": 5.01, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 31, "utc": "2026-10-10T22:43:19.730500+00:00", "status": 503, "ok": false, "latency_ms": 18.31, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 32, "utc": "2026-10-10T22:43:20.730510+00:00", "status": 503, "ok": false, "latency_ms": 4.32, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 33, "utc": "2026-10-10T22:43:21.730490+00:00", "status": 503, "ok": false, "latency_ms": 5.12, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 34, "utc": "2026-10-10T22:43:22.730503+00:00", "status": 503, "ok": false, "latency_ms": 19.97, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 35, "utc": "2026-10-10T22:43:23.730490+00:00", "status": 503, "ok": false, "latency_ms": 4.18, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 36, "utc": "2026-10-10T22:43:24.730500+00:00", "status": 503, "ok": false, "latency_ms": 10.47, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 37, "utc": "2026-10-10T22:43:25.730487+00:00", "status": 503, "ok": false, "latency_ms": 4.96, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 38, "utc": "2026-10-10T22:43:26.730501+00:00", "status": 503, "ok": false, "latency_ms": 4.47, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 39, "utc": "2026-10-10T22:43:27.730497+00:00", "status": 503, "ok": false, "latency_ms": 4.17, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 40, "utc": "2026-10-10T22:43:28.730491+00:00", "status": 503, "ok": false, "latency_ms": 5.09, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 41, "utc": "2026-10-10T22:43:29.730490+00:00", "status": 503, "ok": false, "latency_ms": 7.62, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 42, "utc": "2026-10-10T22:43:30.730506+00:00", "status": 503, "ok": false, "latency_ms": 7.68, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 43, "utc": "2026-10-10T22:43:31.730530+00:00", "status": 503, "ok": false, "latency_ms": 4.37, "schedule_delay_ms": 0.12, "error": "Service Unavailable"}
+{"type": "sample", "index": 44, "utc": "2026-10-10T22:43:32.730489+00:00", "status": 503, "ok": false, "latency_ms": 7.94, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 45, "utc": "2026-10-10T22:43:33.730485+00:00", "status": 503, "ok": false, "latency_ms": 3.97, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 46, "utc": "2026-10-10T22:43:34.730502+00:00", "status": 503, "ok": false, "latency_ms": 4.16, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 47, "utc": "2026-10-10T22:43:35.730515+00:00", "status": 503, "ok": false, "latency_ms": 4.53, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 48, "utc": "2026-10-10T22:43:36.730495+00:00", "status": 503, "ok": false, "latency_ms": 4.69, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 49, "utc": "2026-10-10T22:43:37.730493+00:00", "status": 503, "ok": false, "latency_ms": 4.02, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 50, "utc": "2026-10-10T22:43:38.730484+00:00", "status": 503, "ok": false, "latency_ms": 4.01, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 51, "utc": "2026-10-10T22:43:39.730492+00:00", "status": 503, "ok": false, "latency_ms": 4.1, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 52, "utc": "2026-10-10T22:43:40.730494+00:00", "status": 503, "ok": false, "latency_ms": 4.54, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 53, "utc": "2026-10-10T22:43:41.730488+00:00", "status": 503, "ok": false, "latency_ms": 6.19, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 54, "utc": "2026-10-10T22:43:42.730485+00:00", "status": 503, "ok": false, "latency_ms": 8.35, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 55, "utc": "2026-10-10T22:43:43.730490+00:00", "status": 503, "ok": false, "latency_ms": 7.14, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 56, "utc": "2026-10-10T22:43:44.730523+00:00", "status": 503, "ok": false, "latency_ms": 7.88, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 57, "utc": "2026-10-10T22:43:45.730507+00:00", "status": 503, "ok": false, "latency_ms": 4.1, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 58, "utc": "2026-10-10T22:43:46.730488+00:00", "status": 503, "ok": false, "latency_ms": 4.97, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 59, "utc": "2026-10-10T22:43:47.730489+00:00", "status": 503, "ok": false, "latency_ms": 7.34, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 60, "utc": "2026-10-10T22:43:48.730500+00:00", "status": 503, "ok": false, "latency_ms": 4.16, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 61, "utc": "2026-10-10T22:43:49.730499+00:00", "status": 503, "ok": false, "latency_ms": 4.09, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 62, "utc": "2026-10-10T22:43:50.730501+00:00", "status": 503, "ok": false, "latency_ms": 19.07, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 63, "utc": "2026-10-10T22:43:51.730501+00:00", "status": 503, "ok": false, "latency_ms": 4.82, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 64, "utc": "2026-10-10T22:43:52.730489+00:00", "status": 503, "ok": false, "latency_ms": 4.09, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 65, "utc": "2026-10-10T22:43:53.730493+00:00", "status": 503, "ok": false, "latency_ms": 14.95, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 66, "utc": "2026-10-10T22:43:54.730493+00:00", "status": 503, "ok": false, "latency_ms": 4.16, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 67, "utc": "2026-10-10T22:43:55.730487+00:00", "status": 503, "ok": false, "latency_ms": 19.16, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 68, "utc": "2026-10-10T22:43:56.730491+00:00", "status": 503, "ok": false, "latency_ms": 4.18, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 69, "utc": "2026-10-10T22:43:57.730490+00:00", "status": 503, "ok": false, "latency_ms": 8.0, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 70, "utc": "2026-10-10T22:43:58.730509+00:00", "status": 503, "ok": false, "latency_ms": 8.12, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 71, "utc": "2026-10-10T22:43:59.730506+00:00", "status": 503, "ok": false, "latency_ms": 8.65, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 72, "utc": "2026-10-10T22:44:00.730505+00:00", "status": 503, "ok": false, "latency_ms": 4.13, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 73, "utc": "2026-10-10T22:44:01.730496+00:00", "status": 503, "ok": false, "latency_ms": 4.57, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 74, "utc": "2026-10-10T22:44:02.730496+00:00", "status": 503, "ok": false, "latency_ms": 4.23, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 75, "utc": "2026-10-10T22:44:03.730497+00:00", "status": 503, "ok": false, "latency_ms": 5.54, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 76, "utc": "2026-10-10T22:44:04.730492+00:00", "status": 503, "ok": false, "latency_ms": 20.94, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 77, "utc": "2026-10-10T22:44:05.730510+00:00", "status": 503, "ok": false, "latency_ms": 4.59, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 78, "utc": "2026-10-10T22:44:06.730507+00:00", "status": 503, "ok": false, "latency_ms": 4.69, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 79, "utc": "2026-10-10T22:44:07.730519+00:00", "status": 503, "ok": false, "latency_ms": 8.4, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 80, "utc": "2026-10-10T22:44:08.730500+00:00", "status": 503, "ok": false, "latency_ms": 8.1, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 81, "utc": "2026-10-10T22:44:09.730500+00:00", "status": 503, "ok": false, "latency_ms": 4.16, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 82, "utc": "2026-10-10T22:44:10.730498+00:00", "status": 503, "ok": false, "latency_ms": 4.54, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 83, "utc": "2026-10-10T22:44:11.730499+00:00", "status": 503, "ok": false, "latency_ms": 5.87, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 84, "utc": "2026-10-10T22:44:12.730500+00:00", "status": 503, "ok": false, "latency_ms": 4.17, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 85, "utc": "2026-10-10T22:44:13.730515+00:00", "status": 503, "ok": false, "latency_ms": 4.1, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 86, "utc": "2026-10-10T22:44:14.730512+00:00", "status": 503, "ok": false, "latency_ms": 19.01, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 87, "utc": "2026-10-10T22:44:15.730521+00:00", "status": 503, "ok": false, "latency_ms": 8.22, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 88, "utc": "2026-10-10T22:44:16.730504+00:00", "status": 503, "ok": false, "latency_ms": 4.27, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 89, "utc": "2026-10-10T22:44:17.730502+00:00", "status": 503, "ok": false, "latency_ms": 4.17, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 90, "utc": "2026-10-10T22:44:18.730524+00:00", "status": 503, "ok": false, "latency_ms": 4.22, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 91, "utc": "2026-10-10T22:44:19.730509+00:00", "status": 503, "ok": false, "latency_ms": 8.22, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 92, "utc": "2026-10-10T22:44:20.730524+00:00", "status": 503, "ok": false, "latency_ms": 4.42, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 93, "utc": "2026-10-10T22:44:21.730503+00:00", "status": 503, "ok": false, "latency_ms": 4.79, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 94, "utc": "2026-10-10T22:44:22.730495+00:00", "status": 503, "ok": false, "latency_ms": 12.1, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 95, "utc": "2026-10-10T22:44:23.730508+00:00", "status": 503, "ok": false, "latency_ms": 4.44, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 96, "utc": "2026-10-10T22:44:24.730495+00:00", "status": 503, "ok": false, "latency_ms": 5.7, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 97, "utc": "2026-10-10T22:44:25.730510+00:00", "status": 503, "ok": false, "latency_ms": 8.57, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 98, "utc": "2026-10-10T22:44:26.730502+00:00", "status": 503, "ok": false, "latency_ms": 4.37, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 99, "utc": "2026-10-10T22:44:27.730495+00:00", "status": 503, "ok": false, "latency_ms": 8.13, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 100, "utc": "2026-10-10T22:44:28.730529+00:00", "status": 503, "ok": false, "latency_ms": 4.39, "schedule_delay_ms": 0.12, "error": "Service Unavailable"}
+{"type": "sample", "index": 101, "utc": "2026-10-10T22:44:29.730492+00:00", "status": 503, "ok": false, "latency_ms": 4.37, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 102, "utc": "2026-10-10T22:44:30.730526+00:00", "status": 503, "ok": false, "latency_ms": 4.58, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 103, "utc": "2026-10-10T22:44:31.730520+00:00", "status": 503, "ok": false, "latency_ms": 4.39, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 104, "utc": "2026-10-10T22:44:32.730506+00:00", "status": 503, "ok": false, "latency_ms": 4.09, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 105, "utc": "2026-10-10T22:44:33.730496+00:00", "status": 503, "ok": false, "latency_ms": 4.2, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 106, "utc": "2026-10-10T22:44:34.730537+00:00", "status": 503, "ok": false, "latency_ms": 22.65, "schedule_delay_ms": 0.12, "error": "Service Unavailable"}
+{"type": "sample", "index": 107, "utc": "2026-10-10T22:44:35.730495+00:00", "status": 503, "ok": false, "latency_ms": 4.09, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 108, "utc": "2026-10-10T22:44:36.730524+00:00", "status": 503, "ok": false, "latency_ms": 4.69, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 109, "utc": "2026-10-10T22:44:37.730497+00:00", "status": 503, "ok": false, "latency_ms": 7.1, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 110, "utc": "2026-10-10T22:44:38.730496+00:00", "status": 503, "ok": false, "latency_ms": 4.83, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 111, "utc": "2026-10-10T22:44:39.730505+00:00", "status": 503, "ok": false, "latency_ms": 20.67, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 112, "utc": "2026-10-10T22:44:40.730488+00:00", "status": 503, "ok": false, "latency_ms": 4.55, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 113, "utc": "2026-10-10T22:44:41.730507+00:00", "status": 503, "ok": false, "latency_ms": 4.94, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 114, "utc": "2026-10-10T22:44:42.730502+00:00", "status": 503, "ok": false, "latency_ms": 7.02, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 115, "utc": "2026-10-10T22:44:43.730503+00:00", "status": 503, "ok": false, "latency_ms": 19.28, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 116, "utc": "2026-10-10T22:44:44.730492+00:00", "status": 503, "ok": false, "latency_ms": 4.93, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 117, "utc": "2026-10-10T22:44:45.730483+00:00", "status": 503, "ok": false, "latency_ms": 19.52, "schedule_delay_ms": 0.07, "error": "Service Unavailable"}
+{"type": "sample", "index": 118, "utc": "2026-10-10T22:44:46.730493+00:00", "status": 503, "ok": false, "latency_ms": 4.21, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 119, "utc": "2026-10-10T22:44:47.730496+00:00", "status": 503, "ok": false, "latency_ms": 8.07, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 120, "utc": "2026-10-10T22:44:48.730496+00:00", "status": 503, "ok": false, "latency_ms": 4.02, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 121, "utc": "2026-10-10T22:44:49.730484+00:00", "status": 503, "ok": false, "latency_ms": 3.98, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 122, "utc": "2026-10-10T22:44:50.730513+00:00", "status": 503, "ok": false, "latency_ms": 5.16, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 123, "utc": "2026-10-10T22:44:51.730495+00:00", "status": 503, "ok": false, "latency_ms": 4.12, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 124, "utc": "2026-10-10T22:44:52.730492+00:00", "status": 503, "ok": false, "latency_ms": 4.94, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 125, "utc": "2026-10-10T22:44:53.730486+00:00", "status": 503, "ok": false, "latency_ms": 4.21, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 126, "utc": "2026-10-10T22:44:54.730503+00:00", "status": 503, "ok": false, "latency_ms": 4.19, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 127, "utc": "2026-10-10T22:44:55.730494+00:00", "status": 503, "ok": false, "latency_ms": 4.03, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 128, "utc": "2026-10-10T22:44:56.730487+00:00", "status": 503, "ok": false, "latency_ms": 4.63, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 129, "utc": "2026-10-10T22:44:57.730493+00:00", "status": 503, "ok": false, "latency_ms": 5.08, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 130, "utc": "2026-10-10T22:44:58.730486+00:00", "status": 503, "ok": false, "latency_ms": 4.34, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 131, "utc": "2026-10-10T22:44:59.730498+00:00", "status": 503, "ok": false, "latency_ms": 5.12, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 132, "utc": "2026-10-10T22:45:00.730497+00:00", "status": 503, "ok": false, "latency_ms": 4.09, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 133, "utc": "2026-10-10T22:45:01.730489+00:00", "status": 503, "ok": false, "latency_ms": 4.53, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 134, "utc": "2026-10-10T22:45:02.730510+00:00", "status": 503, "ok": false, "latency_ms": 4.3, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 135, "utc": "2026-10-10T22:45:03.730521+00:00", "status": 503, "ok": false, "latency_ms": 8.51, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 136, "utc": "2026-10-10T22:45:04.730514+00:00", "status": 503, "ok": false, "latency_ms": 7.13, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 137, "utc": "2026-10-10T22:45:05.730503+00:00", "status": 503, "ok": false, "latency_ms": 10.04, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 138, "utc": "2026-10-10T22:45:06.730490+00:00", "status": 503, "ok": false, "latency_ms": 4.24, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 139, "utc": "2026-10-10T22:45:07.730497+00:00", "status": 503, "ok": false, "latency_ms": 5.25, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 140, "utc": "2026-10-10T22:45:08.730497+00:00", "status": 503, "ok": false, "latency_ms": 7.62, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 141, "utc": "2026-10-10T22:45:09.730510+00:00", "status": 503, "ok": false, "latency_ms": 4.37, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 142, "utc": "2026-10-10T22:45:10.730498+00:00", "status": 503, "ok": false, "latency_ms": 4.44, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 143, "utc": "2026-10-10T22:45:11.730493+00:00", "status": 503, "ok": false, "latency_ms": 4.66, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 144, "utc": "2026-10-10T22:45:12.730523+00:00", "status": 503, "ok": false, "latency_ms": 4.62, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 145, "utc": "2026-10-10T22:45:13.730493+00:00", "status": 503, "ok": false, "latency_ms": 5.29, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 146, "utc": "2026-10-10T22:45:14.730508+00:00", "status": 503, "ok": false, "latency_ms": 4.38, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 147, "utc": "2026-10-10T22:45:15.730523+00:00", "status": 503, "ok": false, "latency_ms": 19.68, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 148, "utc": "2026-10-10T22:45:16.730488+00:00", "status": 503, "ok": false, "latency_ms": 4.23, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 149, "utc": "2026-10-10T22:45:17.730525+00:00", "status": 503, "ok": false, "latency_ms": 5.12, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 150, "utc": "2026-10-10T22:45:18.730527+00:00", "status": 503, "ok": false, "latency_ms": 17.92, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 151, "utc": "2026-10-10T22:45:19.730525+00:00", "status": 503, "ok": false, "latency_ms": 19.71, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 152, "utc": "2026-10-10T22:45:20.730497+00:00", "status": 503, "ok": false, "latency_ms": 4.2, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 153, "utc": "2026-10-10T22:45:21.730493+00:00", "status": 503, "ok": false, "latency_ms": 3.95, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 154, "utc": "2026-10-10T22:45:22.730499+00:00", "status": 503, "ok": false, "latency_ms": 20.25, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 155, "utc": "2026-10-10T22:45:23.730499+00:00", "status": 503, "ok": false, "latency_ms": 4.36, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 156, "utc": "2026-10-10T22:45:24.730487+00:00", "status": 503, "ok": false, "latency_ms": 4.07, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 157, "utc": "2026-10-10T22:45:25.730489+00:00", "status": 503, "ok": false, "latency_ms": 19.69, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 158, "utc": "2026-10-10T22:45:26.730502+00:00", "status": 503, "ok": false, "latency_ms": 4.36, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 159, "utc": "2026-10-10T22:45:27.730523+00:00", "status": 503, "ok": false, "latency_ms": 4.41, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 160, "utc": "2026-10-10T22:45:28.730508+00:00", "status": 503, "ok": false, "latency_ms": 19.97, "schedule_delay_ms": 0.1, "error": "Service Unavailable"}
+{"type": "sample", "index": 161, "utc": "2026-10-10T22:45:29.730527+00:00", "status": 503, "ok": false, "latency_ms": 8.26, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 162, "utc": "2026-10-10T22:45:30.730494+00:00", "status": 503, "ok": false, "latency_ms": 5.23, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 163, "utc": "2026-10-10T22:45:31.730492+00:00", "status": 503, "ok": false, "latency_ms": 4.04, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 164, "utc": "2026-10-10T22:45:32.730540+00:00", "status": 503, "ok": false, "latency_ms": 4.39, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 165, "utc": "2026-10-10T22:45:33.730498+00:00", "status": 503, "ok": false, "latency_ms": 4.22, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 166, "utc": "2026-10-10T22:45:34.730524+00:00", "status": 503, "ok": false, "latency_ms": 4.42, "schedule_delay_ms": 0.11, "error": "Service Unavailable"}
+{"type": "sample", "index": 167, "utc": "2026-10-10T22:45:35.730499+00:00", "status": 503, "ok": false, "latency_ms": 4.36, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 168, "utc": "2026-10-10T22:45:36.730501+00:00", "status": 503, "ok": false, "latency_ms": 4.57, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 169, "utc": "2026-10-10T22:45:37.730501+00:00", "status": 503, "ok": false, "latency_ms": 4.12, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 170, "utc": "2026-10-10T22:45:38.730499+00:00", "status": 503, "ok": false, "latency_ms": 4.13, "schedule_delay_ms": 0.09, "error": "Service Unavailable"}
+{"type": "sample", "index": 171, "utc": "2026-10-10T22:45:39.730491+00:00", "status": 503, "ok": false, "latency_ms": 18.81, "schedule_delay_ms": 0.08, "error": "Service Unavailable"}
+{"type": "sample", "index": 172, "utc": "2026-10-10T22:45:40.730518+00:00", "status": 200, "ok": true, "latency_ms": 20.74, "schedule_delay_ms": 0.11, "error": null}
+{"type": "sample", "index": 173, "utc": "2026-10-10T22:45:41.730494+00:00", "status": 200, "ok": true, "latency_ms": 5.58, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 174, "utc": "2026-10-10T22:45:42.730518+00:00", "status": 200, "ok": true, "latency_ms": 9.99, "schedule_delay_ms": 0.11, "error": null}
+{"type": "sample", "index": 175, "utc": "2026-10-10T22:45:43.730496+00:00", "status": 200, "ok": true, "latency_ms": 20.34, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 176, "utc": "2026-10-10T22:45:44.730527+00:00", "status": 200, "ok": true, "latency_ms": 6.16, "schedule_delay_ms": 0.12, "error": null}
+{"type": "sample", "index": 177, "utc": "2026-10-10T22:45:45.730501+00:00", "status": 200, "ok": true, "latency_ms": 22.72, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 178, "utc": "2026-10-10T22:45:46.730523+00:00", "status": 200, "ok": true, "latency_ms": 6.3, "schedule_delay_ms": 0.11, "error": null}
+{"type": "sample", "index": 179, "utc": "2026-10-10T22:45:47.730503+00:00", "status": 200, "ok": true, "latency_ms": 9.32, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 180, "utc": "2026-10-10T22:45:48.730504+00:00", "status": 200, "ok": true, "latency_ms": 6.17, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 181, "utc": "2026-10-10T22:45:49.730518+00:00", "status": 200, "ok": true, "latency_ms": 8.69, "schedule_delay_ms": 0.11, "error": null}
+{"type": "sample", "index": 182, "utc": "2026-10-10T22:45:50.730500+00:00", "status": 200, "ok": true, "latency_ms": 8.53, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 183, "utc": "2026-10-10T22:45:51.730492+00:00", "status": 200, "ok": true, "latency_ms": 5.07, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 184, "utc": "2026-10-10T22:45:52.730487+00:00", "status": 200, "ok": true, "latency_ms": 5.88, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 185, "utc": "2026-10-10T22:45:53.730514+00:00", "status": 200, "ok": true, "latency_ms": 9.2, "schedule_delay_ms": 0.1, "error": null}
+{"type": "sample", "index": 186, "utc": "2026-10-10T22:45:54.730504+00:00", "status": 200, "ok": true, "latency_ms": 5.07, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 187, "utc": "2026-10-10T22:45:55.730486+00:00", "status": 200, "ok": true, "latency_ms": 4.99, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 188, "utc": "2026-10-10T22:45:56.730493+00:00", "status": 200, "ok": true, "latency_ms": 5.13, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 189, "utc": "2026-10-10T22:45:57.730494+00:00", "status": 200, "ok": true, "latency_ms": 5.21, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 190, "utc": "2026-10-10T22:45:58.730498+00:00", "status": 200, "ok": true, "latency_ms": 21.62, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 191, "utc": "2026-10-10T22:45:59.730499+00:00", "status": 200, "ok": true, "latency_ms": 20.35, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 192, "utc": "2026-10-10T22:46:00.730492+00:00", "status": 200, "ok": true, "latency_ms": 5.05, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 193, "utc": "2026-10-10T22:46:01.730496+00:00", "status": 200, "ok": true, "latency_ms": 5.15, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 194, "utc": "2026-10-10T22:46:02.730489+00:00", "status": 200, "ok": true, "latency_ms": 4.9, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 195, "utc": "2026-10-10T22:46:03.730501+00:00", "status": 200, "ok": true, "latency_ms": 5.11, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 196, "utc": "2026-10-10T22:46:04.730494+00:00", "status": 200, "ok": true, "latency_ms": 8.16, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 197, "utc": "2026-10-10T22:46:05.730497+00:00", "status": 200, "ok": true, "latency_ms": 6.02, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 198, "utc": "2026-10-10T22:46:06.730489+00:00", "status": 200, "ok": true, "latency_ms": 5.3, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 199, "utc": "2026-10-10T22:46:07.730488+00:00", "status": 200, "ok": true, "latency_ms": 9.09, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 200, "utc": "2026-10-10T22:46:08.730503+00:00", "status": 200, "ok": true, "latency_ms": 5.58, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 201, "utc": "2026-10-10T22:46:09.730491+00:00", "status": 200, "ok": true, "latency_ms": 8.85, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 202, "utc": "2026-10-10T22:46:10.730493+00:00", "status": 200, "ok": true, "latency_ms": 19.07, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 203, "utc": "2026-10-10T22:46:11.730498+00:00", "status": 200, "ok": true, "latency_ms": 5.46, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 204, "utc": "2026-10-10T22:46:12.730521+00:00", "status": 200, "ok": true, "latency_ms": 10.45, "schedule_delay_ms": 0.11, "error": null}
+{"type": "sample", "index": 205, "utc": "2026-10-10T22:46:13.730539+00:00", "status": 200, "ok": true, "latency_ms": 9.1, "schedule_delay_ms": 0.11, "error": null}
+{"type": "sample", "index": 206, "utc": "2026-10-10T22:46:14.730493+00:00", "status": 200, "ok": true, "latency_ms": 6.06, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 207, "utc": "2026-10-10T22:46:15.730491+00:00", "status": 200, "ok": true, "latency_ms": 8.23, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 208, "utc": "2026-10-10T22:46:16.730498+00:00", "status": 200, "ok": true, "latency_ms": 5.25, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 209, "utc": "2026-10-10T22:46:17.730542+00:00", "status": 200, "ok": true, "latency_ms": 8.94, "schedule_delay_ms": 0.11, "error": null}
+{"type": "sample", "index": 210, "utc": "2026-10-10T22:46:18.730502+00:00", "status": 200, "ok": true, "latency_ms": 5.18, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 211, "utc": "2026-10-10T22:46:19.730494+00:00", "status": 200, "ok": true, "latency_ms": 6.11, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 212, "utc": "2026-10-10T22:46:20.730494+00:00", "status": 200, "ok": true, "latency_ms": 6.17, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 213, "utc": "2026-10-10T22:46:21.730515+00:00", "status": 200, "ok": true, "latency_ms": 5.09, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 214, "utc": "2026-10-10T22:46:22.730494+00:00", "status": 200, "ok": true, "latency_ms": 5.26, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 215, "utc": "2026-10-10T22:46:23.730502+00:00", "status": 200, "ok": true, "latency_ms": 21.77, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 216, "utc": "2026-10-10T22:46:24.730503+00:00", "status": 200, "ok": true, "latency_ms": 20.52, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 217, "utc": "2026-10-10T22:46:25.730497+00:00", "status": 200, "ok": true, "latency_ms": 8.28, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 218, "utc": "2026-10-10T22:46:26.730511+00:00", "status": 200, "ok": true, "latency_ms": 5.54, "schedule_delay_ms": 0.1, "error": null}
+{"type": "sample", "index": 219, "utc": "2026-10-10T22:46:27.730502+00:00", "status": 200, "ok": true, "latency_ms": 5.97, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 220, "utc": "2026-10-10T22:46:28.730488+00:00", "status": 200, "ok": true, "latency_ms": 8.97, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 221, "utc": "2026-10-10T22:46:29.730498+00:00", "status": 200, "ok": true, "latency_ms": 8.53, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 222, "utc": "2026-10-10T22:46:30.730517+00:00", "status": 200, "ok": true, "latency_ms": 11.41, "schedule_delay_ms": 0.11, "error": null}
+{"type": "sample", "index": 223, "utc": "2026-10-10T22:46:31.730521+00:00", "status": 200, "ok": true, "latency_ms": 5.35, "schedule_delay_ms": 0.11, "error": null}
+{"type": "sample", "index": 224, "utc": "2026-10-10T22:46:32.730488+00:00", "status": 200, "ok": true, "latency_ms": 4.96, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 225, "utc": "2026-10-10T22:46:33.730496+00:00", "status": 200, "ok": true, "latency_ms": 12.25, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 226, "utc": "2026-10-10T22:46:34.730496+00:00", "status": 200, "ok": true, "latency_ms": 9.2, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 227, "utc": "2026-10-10T22:46:35.730498+00:00", "status": 200, "ok": true, "latency_ms": 8.13, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 228, "utc": "2026-10-10T22:46:36.730506+00:00", "status": 200, "ok": true, "latency_ms": 5.01, "schedule_delay_ms": 0.1, "error": null}
+{"type": "sample", "index": 229, "utc": "2026-10-10T22:46:37.730495+00:00", "status": 200, "ok": true, "latency_ms": 5.1, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 230, "utc": "2026-10-10T22:46:38.730496+00:00", "status": 200, "ok": true, "latency_ms": 5.89, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 231, "utc": "2026-10-10T22:46:39.730520+00:00", "status": 200, "ok": true, "latency_ms": 5.31, "schedule_delay_ms": 0.11, "error": null}
+{"type": "sample", "index": 232, "utc": "2026-10-10T22:46:40.730504+00:00", "status": 200, "ok": true, "latency_ms": 5.08, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 233, "utc": "2026-10-10T22:46:41.730493+00:00", "status": 200, "ok": true, "latency_ms": 5.11, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 234, "utc": "2026-10-10T22:46:42.730492+00:00", "status": 200, "ok": true, "latency_ms": 5.06, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 235, "utc": "2026-10-10T22:46:43.730503+00:00", "status": 200, "ok": true, "latency_ms": 20.52, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 236, "utc": "2026-10-10T22:46:44.730486+00:00", "status": 200, "ok": true, "latency_ms": 18.72, "schedule_delay_ms": 0.08, "error": null}
+{"type": "sample", "index": 237, "utc": "2026-10-10T22:46:45.730495+00:00", "status": 200, "ok": true, "latency_ms": 6.12, "schedule_delay_ms": 0.09, "error": null}
+{"type": "sample", "index": 238, "utc": "2026-10-10T22:46:46.730508+00:00", "status": 200, "ok": true, "latency_ms": 5.72, "schedule_delay_ms": 0.1, "error": null}
+{"type": "sample", "index": 239, "utc": "2026-10-10T22:46:47.730488+00:00", "status": 200, "ok": true, "latency_ms": 8.16, "schedule_delay_ms": 0.08, "error": null}
+{"type": "summary", "url": "http://podinfo.lab.test/readyz", "host": "podinfo.lab.test", "attempts": 240, "failures": 153, "status_counts": {"200": 87, "503": 153}, "interval_s": 1.0, "timeout_s": 0.8, "elapsed_s": 239.01, "p95_attempt_latency_ms": 20.34, "max_schedule_delay_ms": 0.12}

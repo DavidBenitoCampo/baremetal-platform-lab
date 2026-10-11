@@ -1,0 +1,36 @@
+{
+    "status": "success",
+    "data": {
+        "groups": [
+            {
+                "name": "platform-lab",
+                "file": "/etc/prometheus/alerts.yml",
+                "rules": [
+                    {
+                        "state": "inactive",
+                        "name": "PodinfoUnavailable",
+                        "query": "kube_deployment_status_replicas_available{deployment=\"podinfo\",namespace=\"platform-demo\"} == 0",
+                        "duration": 60,
+                        "keepFiringFor": 0,
+                        "labels": {
+                            "severity": "warning"
+                        },
+                        "annotations": {
+                            "description": "Podinfo in platform-demo has reported zero available replicas for at least one minute.",
+                            "summary": "Podinfo has no available replicas"
+                        },
+                        "alerts": [],
+                        "health": "ok",
+                        "evaluationTime": 0.000421463,
+                        "lastEvaluation": "2026-10-10T22:40:52.964833412Z",
+                        "type": "alerting"
+                    }
+                ],
+                "interval": 30,
+                "limit": 0,
+                "evaluationTime": 0.000475927,
+                "lastEvaluation": "2026-10-10T22:40:52.964784838Z"
+            }
+        ]
+    }
+}
