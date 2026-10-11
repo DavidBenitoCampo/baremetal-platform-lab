@@ -1,0 +1,5 @@
+NAMESPACE  	NAME       	REVISION          	SUSPENDED	READY	MESSAGE                              
+flux-system	flux-system	main@sha1:2b8224e8	False    	True 	Applied revision: main@sha1:2b8224e8	
+flux-system	monitoring 	main@sha1:2b8224e8	False    	True 	Applied revision: main@sha1:2b8224e8	
+flux-system	ollama     	main@sha1:2b8224e8	False    	True 	Applied revision: main@sha1:2b8224e8	
+flux-system	podinfo    	main@sha1:2b8224e8	False    	True 	Applied revision: main@sha1:2b8224e8	
