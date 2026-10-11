@@ -121,6 +121,8 @@ Grafana, Ollama, and Prometheus worked through SSH tunnels. The final Prometheus
 
 During testing, an old port-forward occupied a port on the Pi. Another attempt failed after its destination listener stopped. For Prometheus, I switched to forwarding directly to the internal Kubernetes Service IP through SSH.
 
+I also tested workstation `kubectl` and `flux` access from outside my home network through an SSH tunnel to the Kubernetes API. The VPN kubeconfig uses local port 16443 and verifies the Pi's certificate using its LAN identity.
+
 VPN reboot persistence and denied-access tests have not been recorded.
 
 [VPN access evidence](docs/evidence/2026-10-11-vpn-access.md) · [Prometheus result over VPN](docs/evidence/prometheus-over-vpn.json)
@@ -132,6 +134,8 @@ I created an encrypted K3s backup on the workstation, separate from the Pi's SSD
 The backup included K3s configuration, SQLite state, the server token, credentials, encryption configuration, and TLS files. Before restoring, I stopped K3s and saved a rollback archive on the Pi. After extracting the backup and starting K3s, the node returned to `Ready`.
 
 The observed Deployments showed Ollama at `1/1`, Podinfo at `2/2`, and Prometheus, Grafana, and kube-state-metrics at `1/1`.
+
+Flux reconciliation then timed out while updating status. The controller containers had continued running during the restore. After restarting source-controller and kustomize-controller, the Git source fetched the current revision and all four Kustomizations reported Ready at commit `2b8224e8`.
 
 This was a control-plane restore on the same Pi with existing PVC data still present. The archive excludes model files, Prometheus history, Grafana data, other application volume data, and the operating system. Rebuilding onto an empty disk has not been tested. Restore duration and application request recovery were not measured.
 
@@ -181,7 +185,16 @@ ssh -i ~/.ssh/pi_lab_ed25519 lab@100.90.135.106 \
   'sudo -n k3s kubectl get gitrepositories,kustomizations -A'
 ```
 
-Local `kubectl` and `flux` access through a VPN API tunnel is the next access task. The SSH checks above already work.
+Workstation `kubectl` and `flux` also work through the VPN API tunnel. Open the tunnel following the [post-restore checks](docs/runbooks/post-restore-checks.md), then select the separate VPN kubeconfig:
+
+```bash
+export KUBECONFIG="$HOME/.kube/pi-lab-vpn.yaml"
+
+kubectl get nodes
+flux get kustomizations -A
+```
+
+Keep the tunnel terminal open. The VPN kubeconfig stays outside the repository.
 
 For Podinfo on the home LAN, the workstation resolves `podinfo.lab.test` to the Pi's LAN address:
 
@@ -267,11 +280,10 @@ For a fresh build, start with the [bootstrap runbook](docs/runbooks/bootstrap.md
 
 I'm keeping each step small enough for the existing hardware and a four-hour weekly budget.
 
-1. Add an SSH API tunnel and separate kubeconfig for workstation `kubectl` and `flux` access from outside the home LAN.
-2. Turn the backup and restore steps into a repeatable runbook. Add a test marker, retained command output, recovery timing, and a second encrypted backup copy.
-3. Measure inference CPU and memory under load. Add request-level metrics and failure checks for missing models and timeouts.
-4. Test a failed release recovered through Git and Flux, with continuous HTTP measurements.
-5. Verify VPN and NetworkPolicy restrictions, add Flux schema validation, and pin runtime image digests.
+1. Make the full backup and restore procedure repeatable. Add a test marker, retained restore output, recovery timing, and a second encrypted backup copy.
+2. Measure inference CPU and memory under load. Add request-level metrics and failure checks for missing models and timeouts.
+3. Test a failed release recovered through Git and Flux, with continuous HTTP measurements.
+4. Verify VPN and NetworkPolicy restrictions, add Flux schema validation, and pin runtime image digests.
 
 After these checks, I'd like to add a small read-only assistant with one approved status-reading tool and a scoped identity. The current project covers model serving and operations. Agent execution is still future work.
 
