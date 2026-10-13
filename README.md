@@ -129,17 +129,36 @@ VPN reboot persistence and denied-access tests have not been recorded.
 
 ### K3s backup and restore
 
-I created an encrypted K3s backup on the workstation, separate from the Pi's SSD. The archive was about 4.1 MB. Its SHA256 check passed, and I decrypted and extracted the archive before the live restore.
+On 13 October, I restored K3s from an encrypted SQLite backup stored on my workstation. The source backup and a separate rollback archive passed SHA256 verification, full extraction, required-file checks, and SQLite `quick_check`.
 
-The backup included K3s configuration, SQLite state, the server token, credentials, encryption configuration, and TLS files. Before restoring, I stopped K3s and saved a rollback archive on the Pi. After extracting the backup and starting K3s, the node returned to `Ready`.
+I used a ConfigMap outside Flux to prove the database restore. Its state changed from `before-backup` to `after-backup` after the backup. Restoring the earlier database returned the state to `before-backup` with the original UID.
 
-The observed Deployments showed Ollama at `1/1`, Podinfo at `2/2`, and Prometheus, Grafana, and kube-state-metrics at `1/1`.
+The helper stopped K3s and its containers, retained the current cluster files on the Pi, installed the backup, and restarted K3s. The node returned to Ready and all deployments recovered.
 
-Flux reconciliation then timed out while updating status. The controller containers had continued running during the restore. After restarting source-controller and kustomize-controller, the Git source fetched the current revision and all four Kustomizations reported Ready at commit `2b8224e8`.
+| Measurement | Observed result |
+| --- | --- |
+| Restore command and control-plane checks | 17.265 seconds |
+| HTTP test | 600 sequential requests, one per second, 0.8-second timeout |
+| HTTP results | 578 HTTP 200 responses, 20 transport errors, 2 HTTP 503 responses |
+| First failed request | 2026-10-13 21:35:48.829181 UTC |
+| Last failed request | 2026-10-13 21:36:09.829208 UTC |
+| First success after the outage | 2026-10-13 21:36:10.829209 UTC |
+| First failure to first success after the outage | About 22 seconds, sampled once per second |
+| p95 HTTP attempt latency | 28.75 ms |
+| Post-restore inference | HTTP 200, 4.6047 seconds, 27 generated tokens |
+| Model | `qwen2.5:0.5b`, same digest as before the restore |
 
-This was a control-plane restore on the same Pi with existing PVC data still present. The archive excludes model files, Prometheus history, Grafana data, other application volume data, and the operating system. Rebuilding onto an empty disk has not been tested. Restore duration and application request recovery were not measured.
+The HTTP probe ran on the workstation through an SSH tunnel over Tailscale to the Pi's Traefik Ingress. The 17.265-second helper measurement ends at API, node, and marker checks. The HTTP samples measure application recovery separately.
 
-[Restore evidence](docs/evidence/2026-10-11-k3s-restore.md)
+The Git source and all four Flux Kustomizations later reported Ready at `main@sha1:ef96a903ecb89386500099e1f8225f87c9577fab`. The [post-restore checks](docs/runbooks/post-restore-checks.md) include a request acknowledgement check for proving a fresh reconciliation.
+
+The first attempt stopped at a precondition because the marker was already `before-backup`. K3s kept running. Its 900 successful requests measured service health before the live restore. The measurements above come from the second attempt, after preparing the marker.
+
+The backup covers K3s configuration, SQLite state, the server token, credentials, encryption configuration, and TLS files. This was a restore on the same Pi and SSD. Model files, Prometheus history, Grafana data, other application volume data, and the operating system are outside the backup scope. These measurements describe one controlled lab test.
+
+[Backup and restore runbook](docs/runbooks/backup-restore.md) · [Restore output](docs/evidence/2026-10-13-live-restore-attempt-2.txt) · [HTTP samples](docs/evidence/2026-10-13-live-restore-http.jsonl) · [Inference after restore](docs/evidence/ollama-after-live-restore.jsonl)
+
+The [11 October restore](docs/evidence/2026-10-11-k3s-restore.md) also documents the earlier Flux cache problem and controller restart.
 
 ## How changes reach the Pi
 
@@ -270,7 +289,7 @@ A production deployment would need separate failure domains, independent monitor
 - `clusters/pi/`: Flux bootstrap and reconciliation definitions.
 - `monitoring/prometheus/`: Prometheus, kube-state-metrics, Grafana, dashboards, and alert rules.
 - `.github/workflows/` and `ci/`: validation and tool configuration.
-- `scripts/`: preflight, HTTP checks, and inference measurements.
+- `scripts/`: preflight, HTTP checks, inference measurements, and K3s backup, verification, and restore helpers.
 - `docs/`: evidence, runbooks, decisions, and incident templates.
 - `versions.yaml`: version notes, including proposed components. The deployed manifests show the running choices.
 
@@ -280,7 +299,7 @@ For a fresh build, start with the [bootstrap runbook](docs/runbooks/bootstrap.md
 
 I'm keeping each step small enough for the existing hardware and a four-hour weekly budget.
 
-1. Make the full backup and restore procedure repeatable. Add a test marker, retained restore output, recovery timing, and a second encrypted backup copy.
+1. Save Flux request acknowledgements after restore, add a second independent backup destination, and improve restore precondition error messages.
 2. Measure inference CPU and memory under load. Add request-level metrics and failure checks for missing models and timeouts.
 3. Test a failed release recovered through Git and Flux, with continuous HTTP measurements.
 4. Verify VPN and NetworkPolicy restrictions, add Flux schema validation, and pin runtime image digests.
