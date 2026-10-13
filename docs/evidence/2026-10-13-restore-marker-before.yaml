@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  state: before-backup
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2026-10-12T22:08:45Z"
+  name: restore-test-marker
+  namespace: default
+  resourceVersion: "312283"
+  uid: 1ca94ac5-a093-4b6f-8df1-84820b6a7e05
