@@ -2,7 +2,7 @@
 
 Use this procedure after restoring K3s control-plane state on the same Pi.
 The K3s service should already be running. Backup extraction belongs to a
-separate restore procedure.
+[backup and restore runbook](backup-restore.md).
 
 The goal is to verify remote access, workload readiness, and Flux synchronization.
 
@@ -61,6 +61,32 @@ Compare the Git source revision with the current GitHub `main` commit.
 The four Kustomizations should report the same revision, Ready True, and
 Suspended False. Workload Kustomizations reconcile on their own intervals.
 
+## Check Flux through SSH
+
+Use this route when the workstation API tunnel is closed. Run from the repository root. The commands request a fresh Git fetch, wait for the controller to acknowledge the request, then reconcile each Kustomization.
+
+`requestedAt` is the Flux annotation name. The earlier `reconcile.fluxcd.io/request` annotation does not request reconciliation.
+
+```bash
+set -o pipefail
+
+ssh -i "$HOME/.ssh/pi_lab_ed25519" lab@100.90.135.106 '
+set -e
+restore_flux_request="$(date -u +%s%N)"
+
+for resource in gitrepository/flux-system kustomization/flux-system kustomization/monitoring kustomization/ollama kustomization/podinfo; do
+  sudo -n k3s kubectl annotate "$resource" -n flux-system --overwrite "reconcile.fluxcd.io/requestedAt=$restore_flux_request"
+  sudo -n k3s kubectl wait "$resource" -n flux-system --for="jsonpath={.status.lastHandledReconcileAt}=$restore_flux_request" --timeout=180s
+  sudo -n k3s kubectl wait "$resource" -n flux-system --for=condition=Ready --timeout=180s
+done
+
+sudo -n k3s kubectl get gitrepository,kustomizations -n flux-system -o custom-columns="KIND:.kind,NAME:.metadata.name,REQUESTED:.metadata.annotations.reconcile\\.fluxcd\\.io/requestedAt,HANDLED:.status.lastHandledReconcileAt"
+sudo -n k3s kubectl get gitrepository,kustomizations -n flux-system
+' | tee docs/evidence/flux-after-live-restore.txt
+```
+
+Every `HANDLED` value should equal its `REQUESTED` value. The source and all four Kustomizations should report Ready. Save this output to prove the controllers processed the new request. A Ready value alone also appears in restored status and does not prove a new request was handled.
+
 ## If reconciliation times out after the restore
 
 Save the errors before restarting a controller:
@@ -108,10 +134,16 @@ Node and Deployment readiness verify Kubernetes state. Verify an inference
 request and monitoring access separately before reporting application recovery.
 These checks do not verify restoration of data inside application volumes.
 
-## Recorded test
+## Recorded tests
 
 [11 October 2026 restore results](../evidence/2026-10-11-k3s-restore.md)
 record the observed failure and successful reconciliation after the restarts.
+
+The 13 October restore stopped the K3s containers before replacing the database. The helper verified the restored marker and Ready node in 17.265 seconds. All deployments later reported Ready. The HTTP probe recorded 578 successes and 22 failures over 600 requests. One inference request returned HTTP 200 in 4.6047 seconds with the original model digest.
+
+[Restore output](../evidence/2026-10-13-live-restore-attempt-2.txt) · [HTTP samples](../evidence/2026-10-13-live-restore-http.jsonl) · [Inference response](../evidence/ollama-after-live-restore.jsonl)
+
+The displayed Flux source and all four Kustomizations reported Ready at commit `ef96a903`. Save matching `requestedAt` and `lastHandledReconcileAt` values using the SSH check above before reporting a confirmed manual refresh.
 
 ## References
 
