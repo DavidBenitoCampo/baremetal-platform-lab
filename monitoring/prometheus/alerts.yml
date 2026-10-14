@@ -15,3 +15,39 @@ groups:
           description: >-
             Podinfo in platform-demo has reported zero available
             replicas for at least one minute.
+      - alert: OllamaInferenceCheckFailing
+        expr: ollama_probe_success{job="ollama-inference-probe"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Scheduled Ollama inference checks are failing"
+          description: >-
+            The probe's scheduled model request has failed for at least
+            two minutes. Check the probe logs and Ollama.
+      - alert: OllamaInferenceProbeUnavailable
+        expr: >-
+          (up{job="ollama-inference-probe"} == 0)
+          or absent(up{job="ollama-inference-probe"})
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Prometheus cannot scrape the Ollama inference probe"
+          description: >-
+            The inference probe scrape has failed or disappeared for
+            at least two minutes. Check its Pod, Service, and NetworkPolicies.
+      - alert: OllamaInferenceProbeStale
+        expr: >-
+          time() - max by (job, instance) (
+            {__name__=~"ollama_probe_(last_check|started)_timestamp_seconds",
+             job="ollama-inference-probe"}
+          ) > 180
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Ollama inference probe results have stopped updating"
+          description: >-
+            No check has completed for more than three minutes and
+            the condition has persisted for another minute.

@@ -25,3 +25,4 @@ configMapGenerator:
     namespace: monitoring
     files:
       - grafana-dashboard.json
+      - grafana-inference-dashboard.json

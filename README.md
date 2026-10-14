@@ -68,6 +68,14 @@ The first answer incorrectly described a readiness probe as checking the whole c
 
 [Inference evidence](docs/evidence/2026-10-07-ollama.md) · [Follow-up requests](docs/evidence/ollama-followup-requests.jsonl) · [Request after reboot](docs/evidence/ollama-after-reboot.jsonl) · [Request over VPN](docs/evidence/ollama-over-vpn.jsonl)
 
+The later resource check recorded 1.485 cores as the highest sampled CPU
+reading and 620 MiB as the highest sampled memory. One cold request took
+4.517 seconds, and ten warm requests had a median of 2.021 seconds.
+Missing-model and socket-timeout tests recorded errors and exit code 1.
+A later normal request succeeded after reopening the SSH tunnel.
+
+[Resource and error-test results](docs/evidence/2026-10-14-ollama-resources.md)
+
 ### Flux drift correction
 
 Git declares two Podinfo replicas. I scaled the running Deployment down to one without changing Git. After reconciliation, the Deployment returned to two Ready replicas.
@@ -83,9 +91,10 @@ I added an unsupported `replicaz` field to the Podinfo Deployment on a test bran
 The [workflow](.github/workflows/validate.yml) now checks:
 
 - YAML and Ansible syntax.
-- Kustomize rendering and strict Kubernetes schemas for Podinfo, Ollama, and monitoring.
+- Kustomize rendering and strict Kubernetes schemas for Podinfo, Ollama, the inference probe, and monitoring.
 - Prometheus configuration and referenced alert rules with `promtool`.
 - Python and shell syntax.
+- Local HTTP tests for the scheduled inference probe and alert-state fixtures.
 - JSONL evidence files.
 
 CI runs without Pi credentials or a connection to the cluster. Flux custom-resource schema validation still needs adding.
@@ -95,6 +104,15 @@ CI runs without Pi credentials or a connection to the cluster. Flux custom-resou
 Prometheus scrapes three targets every 30 seconds: Prometheus itself, kube-state-metrics, and kube-state-metrics telemetry. All three returned `up = 1`.
 
 The Grafana dashboard shows scrape health, available replicas, container restarts, and Bound PVCs. Its datasource and dashboard configuration live in Git.
+
+Scheduled inference monitoring is prepared in
+`kubernetes/ai/inference-probe/`. A small Python service asks the model a
+short question once a minute and exports the result, duration, and counters.
+The additional **Ollama Inference Checks** dashboard shows those scheduled
+requests. Alerts cover failed requests, an unavailable exporter, and stale
+results. Live deployment and the firing/recovery test still need Pi evidence.
+
+Follow [the inference monitoring runbook](docs/runbooks/inference-monitoring.md).
 
 I tested `PodinfoUnavailable` by suspending Podinfo reconciliation and scaling the Deployment to zero. The alert moved through pending and firing. After resuming reconciliation, Podinfo returned to two replicas, HTTP requests succeeded, and the alert returned to inactive.
 
@@ -264,6 +282,7 @@ K3s Secrets encryption is enabled. Ollama and the monitoring containers declare 
 | Prometheus | 100m / 500m | 256 MiB / 512 MiB |
 | kube-state-metrics | 50m / 500m | 128 MiB / 256 MiB |
 | Grafana | 100m / 500m | 256 MiB / 512 MiB |
+| Inference probe, prepared | 25m / 100m | 32 MiB / 64 MiB |
 
 These values come from the manifests. They are not observed peak usage. Ollama permits one loaded model and one parallel request.
 
@@ -286,6 +305,7 @@ A production deployment would need separate failure domains, independent monitor
 - `ansible/`: host preparation and K3s settings.
 - `kubernetes/base/` and `kubernetes/overlays/pi/`: Podinfo and the Pi overlay.
 - `kubernetes/ai/ollama/`: inference server and model storage.
+- `kubernetes/ai/inference-probe/`: scheduled model checks and their metrics.
 - `clusters/pi/`: Flux bootstrap and reconciliation definitions.
 - `monitoring/prometheus/`: Prometheus, kube-state-metrics, Grafana, dashboards, and alert rules.
 - `.github/workflows/` and `ci/`: validation and tool configuration.
@@ -300,7 +320,7 @@ For a fresh build, start with the [bootstrap runbook](docs/runbooks/bootstrap.md
 I'm keeping each step small enough for the existing hardware and a four-hour weekly budget.
 
 1. Save Flux request acknowledgements after restore, add a second independent backup destination, and improve restore precondition error messages.
-2. Measure inference CPU and memory under load. Add request-level metrics and failure checks for missing models and timeouts.
+2. Deploy the scheduled inference probe and record its dashboard, denied-Pod check, and alert firing/recovery test. The manual CPU, memory, missing-model, and timeout checks are recorded.
 3. Test a failed release recovered through Git and Flux, with continuous HTTP measurements.
 4. Verify VPN and NetworkPolicy restrictions, add Flux schema validation, and pin runtime image digests.
 

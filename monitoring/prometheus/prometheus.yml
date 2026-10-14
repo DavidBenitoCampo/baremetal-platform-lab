@@ -21,3 +21,7 @@ scrape_configs:
     static_configs:
       - targets:
           - kube-state-metrics.monitoring.svc.cluster.local:8081
+  - job_name: ollama-inference-probe
+    static_configs:
+      - targets:
+          - ollama-inference-probe.ai-lab.svc.cluster.local:9189

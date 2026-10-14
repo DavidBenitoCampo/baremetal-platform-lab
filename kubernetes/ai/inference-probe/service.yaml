@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama-inference-probe
+  labels:
+    app.kubernetes.io/name: ollama-inference-probe
+    app.kubernetes.io/part-of: baremetal-platform-lab
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: ollama-inference-probe
+  ports:
+    - name: metrics
+      port: 9189
+      targetPort: metrics
