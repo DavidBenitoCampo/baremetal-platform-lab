@@ -13,9 +13,10 @@ No Pi connection is part of the job.
 | --- | --- |
 | YAML | Syntax, duplicate keys, indentation, and whitespace |
 | Ansible | `ansible/host.yml` with the public example inventory |
-| Kustomize | The Podinfo Pi overlay and the Ollama configuration |
+| Kustomize | Podinfo, Ollama, the inference probe, and monitoring |
 | Kubernetes schemas | Required fields, field names, and value types in the rendered resources |
-| Python | Syntax of the scripts in `scripts/` |
+| Prometheus | Configuration plus alert firing, scrape failure, staleness, and recovery tests |
+| Python | Syntax and local HTTP tests for the inference probe |
 | Shell | Syntax of `scripts/preflight.sh` |
 | Evidence | Each line in the JSONL files parses as JSON |
 
@@ -57,7 +58,13 @@ fails, open its log and fix the reported file or dependency problem.
 
 The local validation result is recorded in
 [the CI evidence file](../../docs/evidence/2026-10-08-ci-local-validation.md).
-A GitHub run has not been observed yet.
+Use the Actions run for the proposed commit to check the current result.
+
+The inference probe tests use a fake Ollama server on localhost. They cover
+success, missing models, socket timeouts, refused connections, redirects,
+bad responses, and access to metrics during a slow request. These tests do
+not connect to the Pi. The manual NetworkPolicy test Job runs only when
+requested through the inference monitoring runbook.
 
 ## Check an invalid change
 

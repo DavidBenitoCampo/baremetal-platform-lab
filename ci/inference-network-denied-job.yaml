@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: inference-network-denied
+  namespace: ai-lab
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 60
+  ttlSecondsAfterFinished: 600
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: inference-network-denied
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: check
+          image: python:3.12.15-slim-bookworm
+          command:
+            - python
+            - -c
+            - |
+              import socket
+              import sys
+              import urllib.error
+              import urllib.request
+
+              host = "ollama.ai-lab.svc.cluster.local"
+              socket.getaddrinfo(host, 11434)
+              opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+              try:
+                  opener.open(f"http://{host}:11434/api/version", timeout=3)
+              except (TimeoutError, urllib.error.URLError) as error:
+                  reason = getattr(error, "reason", error)
+                  if not isinstance(reason, TimeoutError):
+                      raise
+                  print("DNS resolved; request timed out from the unapproved Pod.")
+                  sys.exit(0)
+              raise SystemExit("FAIL: unapproved Pod reached Ollama.")
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]

@@ -62,7 +62,8 @@ jobs:
         run: |
           yamllint --strict -c ci/yamllint.yaml \
             .github/workflows ansible kubernetes ci versions.yaml \
-            monitoring/prometheus clusters/pi/monitoring.yaml
+            monitoring/prometheus clusters/pi/monitoring.yaml \
+            clusters/pi/inference-probe.yaml
 
       - name: Check Ansible syntax
         run: ansible-playbook -i ansible/inventory.example.ini ansible/host.yml --syntax-check
@@ -72,6 +73,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/manifests"
           kubectl kustomize kubernetes/overlays/pi > "$RUNNER_TEMP/manifests/podinfo.yaml"
           kubectl kustomize kubernetes/ai/ollama > "$RUNNER_TEMP/manifests/ollama.yaml"
+          kubectl kustomize kubernetes/ai/inference-probe > "$RUNNER_TEMP/manifests/inference-probe.yaml"
           kubectl kustomize monitoring/prometheus > "$RUNNER_TEMP/manifests/monitoring.yaml"
 
       - name: Validate Kubernetes fields
@@ -83,7 +85,9 @@ jobs:
             -schema-location "$schema_location" \
             "$RUNNER_TEMP/manifests/podinfo.yaml" \
             "$RUNNER_TEMP/manifests/ollama.yaml" \
-            "$RUNNER_TEMP/manifests/monitoring.yaml"
+            "$RUNNER_TEMP/manifests/inference-probe.yaml" \
+            "$RUNNER_TEMP/manifests/monitoring.yaml" \
+            ci/inference-network-denied-job.yaml
 
       - name: Check Prometheus configuration
         run: |
@@ -94,8 +98,21 @@ jobs:
             --volume "$GITHUB_WORKSPACE/monitoring/prometheus:/work:ro" \
             "$prometheus_image" check config /work/prometheus.yml
 
+      - name: Test alert firing and recovery
+        run: |
+          prometheus_image="ghcr.io/prometheus/prometheus:$PROMETHEUS_VERSION"
+          prometheus_image+="@sha256:$PROMETHEUS_IMAGE_SHA256"
+          docker run --rm --read-only --network=none \
+            --entrypoint=/bin/promtool \
+            --volume "$GITHUB_WORKSPACE:/work:ro" \
+            --workdir /work/ci \
+            "$prometheus_image" test rules prometheus-alerts.test.yml
+
       - name: Check Python syntax
-        run: python -m compileall -q scripts
+        run: python -m compileall -q scripts kubernetes/ai/inference-probe tests
+
+      - name: Test inference probe
+        run: python -m unittest discover -s tests -v
 
       - name: Check shell syntax
         run: bash -n scripts/preflight.sh

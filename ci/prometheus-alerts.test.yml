@@ -1,0 +1,134 @@
+rule_files:
+  - ../monitoring/prometheus/alerts.yml
+evaluation_interval: 30s
+tests:
+  - name: healthy model checks
+    interval: 30s
+    input_series:
+      - series: 'up{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '1+0x20'
+      - series: 'ollama_probe_success{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '1+0x20'
+      - series: 'ollama_probe_started_timestamp_seconds{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '0+0x20'
+      - series: 'ollama_probe_last_check_timestamp_seconds{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '0+30x20'
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: OllamaInferenceCheckFailing
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: OllamaInferenceProbeUnavailable
+        exp_alerts: []
+      - eval_time: 5m
+        alertname: OllamaInferenceProbeStale
+        exp_alerts: []
+  - name: failed model checks fire and then recover
+    interval: 30s
+    input_series:
+      - series: 'up{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '1+0x20'
+      - series: 'ollama_probe_success{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '0+0x8 1+0x12'
+      - series: 'ollama_probe_last_check_timestamp_seconds{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '0+30x20'
+    alert_rule_test:
+      - eval_time: 1m
+        alertname: OllamaInferenceCheckFailing
+        exp_alerts: []
+      - eval_time: 2m
+        alertname: OllamaInferenceCheckFailing
+        exp_alerts:
+          - exp_labels:
+              job: ollama-inference-probe
+              instance: probe:9189
+              severity: warning
+            exp_annotations:
+              summary: "Scheduled Ollama inference checks are failing"
+              description: "The probe's scheduled model request has failed for at least two minutes. Check the probe logs and Ollama."
+      - eval_time: 5m
+        alertname: OllamaInferenceCheckFailing
+        exp_alerts: []
+  - name: failed scrape fires
+    interval: 30s
+    input_series:
+      - series: 'up{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '0+0x10'
+    alert_rule_test:
+      - eval_time: 1m
+        alertname: OllamaInferenceProbeUnavailable
+        exp_alerts: []
+      - eval_time: 2m
+        alertname: OllamaInferenceProbeUnavailable
+        exp_alerts:
+          - exp_labels:
+              job: ollama-inference-probe
+              instance: probe:9189
+              severity: warning
+            exp_annotations:
+              summary: "Prometheus cannot scrape the Ollama inference probe"
+              description: "The inference probe scrape has failed or disappeared for at least two minutes. Check its Pod, Service, and NetworkPolicies."
+  - name: missing scrape target fires
+    interval: 30s
+    input_series: []
+    alert_rule_test:
+      - eval_time: 2m
+        alertname: OllamaInferenceProbeUnavailable
+        exp_alerts:
+          - exp_labels:
+              job: ollama-inference-probe
+              severity: warning
+            exp_annotations:
+              summary: "Prometheus cannot scrape the Ollama inference probe"
+              description: "The inference probe scrape has failed or disappeared for at least two minutes. Check its Pod, Service, and NetworkPolicies."
+  - name: live exporter with a stuck worker fires stale alert
+    interval: 30s
+    input_series:
+      - series: 'up{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '1+0x12'
+      - series: 'ollama_probe_success{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '1+0x12'
+      - series: 'ollama_probe_started_timestamp_seconds{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '0+0x12'
+      - series: 'ollama_probe_last_check_timestamp_seconds{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '0+0x12'
+    alert_rule_test:
+      - eval_time: 3m
+        alertname: OllamaInferenceProbeStale
+        exp_alerts: []
+      - eval_time: 4m30s
+        alertname: OllamaInferenceProbeStale
+        exp_alerts:
+          - exp_labels:
+              job: ollama-inference-probe
+              instance: probe:9189
+              severity: warning
+            exp_annotations:
+              summary: "Ollama inference probe results have stopped updating"
+              description: "No check has completed for more than three minutes and the condition has persisted for another minute."
+  - name: startup grace then no completed checks
+    interval: 30s
+    input_series:
+      - series: 'ollama_probe_started_timestamp_seconds{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '0+0x12'
+      - series: 'ollama_probe_last_check_timestamp_seconds{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '0+0x12'
+      - series: 'ollama_probe_success{job="ollama-inference-probe",instance="probe:9189"}'
+        values: '-1+0x12'
+    alert_rule_test:
+      - eval_time: 2m
+        alertname: OllamaInferenceCheckFailing
+        exp_alerts: []
+      - eval_time: 2m
+        alertname: OllamaInferenceProbeStale
+        exp_alerts: []
+      - eval_time: 4m30s
+        alertname: OllamaInferenceProbeStale
+        exp_alerts:
+          - exp_labels:
+              job: ollama-inference-probe
+              instance: probe:9189
+              severity: warning
+            exp_annotations:
+              summary: "Ollama inference probe results have stopped updating"
+              description: "No check has completed for more than three minutes and the condition has persisted for another minute."
