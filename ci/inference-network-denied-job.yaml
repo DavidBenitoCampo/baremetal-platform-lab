@@ -37,11 +37,11 @@ spec:
               opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
               try:
                   opener.open(f"http://{host}:11434/api/version", timeout=3)
-              except (TimeoutError, urllib.error.URLError) as error:
+              except (TimeoutError, ConnectionRefusedError, urllib.error.URLError) as error:
                   reason = getattr(error, "reason", error)
-                  if not isinstance(reason, TimeoutError):
+                  if not isinstance(reason, (TimeoutError, ConnectionRefusedError)):
                       raise
-                  print("DNS resolved; request timed out from the unapproved Pod.")
+                  print("DNS resolved, unapproved connection failed:", repr(reason))
                   sys.exit(0)
               raise SystemExit("FAIL: unapproved Pod reached Ollama.")
           resources:

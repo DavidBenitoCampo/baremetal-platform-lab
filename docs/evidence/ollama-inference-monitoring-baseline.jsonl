@@ -1,0 +1,10 @@
+{"utc": "2026-10-14T22:00:39.672185+00:00", "model": "qwen2.5:0.5b", "result": "success", "http_status": 200, "generated_tokens": 16, "duration_seconds": 1.5223169019991474}
+{"utc": "2026-10-14T22:01:39.688899+00:00", "model": "qwen2.5:0.5b", "result": "success", "http_status": 200, "generated_tokens": 16, "duration_seconds": 1.5388142679985322}
+{"utc": "2026-10-14T22:02:39.700369+00:00", "model": "qwen2.5:0.5b", "result": "success", "http_status": 200, "generated_tokens": 16, "duration_seconds": 1.5500692540008458}
+{"utc": "2026-10-14T22:03:39.680690+00:00", "model": "qwen2.5:0.5b", "result": "success", "http_status": 200, "generated_tokens": 16, "duration_seconds": 1.5301737759982643}
+{"utc": "2026-10-14T22:04:40.027741+00:00", "model": "qwen2.5:0.5b", "result": "success", "http_status": 200, "generated_tokens": 16, "duration_seconds": 1.8769906679990527}
+{"utc": "2026-10-14T22:05:39.577084+00:00", "model": "qwen2.5:0.5b", "result": "success", "http_status": 200, "generated_tokens": 16, "duration_seconds": 1.4260353879981267}
+{"utc": "2026-10-14T22:06:39.684713+00:00", "model": "qwen2.5:0.5b", "result": "success", "http_status": 200, "generated_tokens": 16, "duration_seconds": 1.53344278700024}
+{"utc": "2026-10-14T22:07:39.684762+00:00", "model": "qwen2.5:0.5b", "result": "success", "http_status": 200, "generated_tokens": 16, "duration_seconds": 1.5332750070010661}
+{"utc": "2026-10-14T22:08:39.680644+00:00", "model": "qwen2.5:0.5b", "result": "success", "http_status": 200, "generated_tokens": 16, "duration_seconds": 1.5289433680009097}
+{"utc": "2026-10-14T22:09:39.675667+00:00", "model": "qwen2.5:0.5b", "result": "success", "http_status": 200, "generated_tokens": 16, "duration_seconds": 1.5237535599990224}

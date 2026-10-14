@@ -1,0 +1,1 @@
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"ollama_probe_success","instance":"ollama-inference-probe.ai-lab.svc.cluster.local:9189","job":"ollama-inference-probe"},"value":[1792015799.744,"1"]}]}}

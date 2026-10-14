@@ -1,0 +1,1 @@
+{"utc": "2026-10-14T22:12:11.756694+00:00", "model": "lab-missing-model:never-pulled", "result": "http_error", "http_status": 404, "generated_tokens": 0, "error": "HTTP 404", "duration_seconds": 0.8106580460007535}
