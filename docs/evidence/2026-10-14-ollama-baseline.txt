@@ -1,0 +1,9 @@
+Tue Oct 13 22:22:31 UTC 2026
+NAME     CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)
+pi-lab   144m         3%       2770Mi          34%
+POD                      NAME     CPU(cores)   MEMORY(bytes)
+ollama-76f6f79d6-zxmpt   ollama   1m           13Mi
+NAME    ID    SIZE    PROCESSOR    CONTEXT    RUNNER    UNTIL
+               total        used        free      shared  buff/cache   available
+Mem:           7.8Gi       1.6Gi       3.8Gi       6.4Mi       2.5Gi       6.1Gi
+Swap:             0B          0B          0B
