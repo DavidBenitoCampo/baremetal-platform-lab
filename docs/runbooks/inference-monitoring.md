@@ -67,10 +67,15 @@ Save the baseline:
 
 ```bash
 mkdir -p docs/evidence
-curl --fail --silent --show-error --get +  http://127.0.0.1:19190/api/v1/query +  --data-urlencode 'query=ollama_probe_success{job="ollama-inference-probe"}' +  | tee docs/evidence/ollama-inference-monitoring-baseline.json
+set -o pipefail
+curl --connect-timeout 5 --max-time 15 --fail --silent --show-error --get http://127.0.0.1:19190/api/v1/query --data-urlencode 'query=ollama_probe_success{job="ollama-inference-probe"}' | tee docs/evidence/ollama-inference-monitoring-baseline.json
 
-kubectl logs -n ai-lab deployment/ollama-inference-probe --tail=10 +  > docs/evidence/ollama-inference-monitoring-baseline.jsonl
+kubectl logs -n ai-lab deployment/ollama-inference-probe --container=probe --tail=10 > docs/evidence/ollama-inference-monitoring-baseline.jsonl
 ```
+
+The Prometheus response should contain a nonempty result with a sample value
+of `"1"`. An empty result does not establish a successful check. Keep the
+Prometheus port-forward terminal open while running these requests.
 
 ## Check denied access
 
@@ -78,19 +83,80 @@ Run this after the approved probe has reported a successful request and the
 Ollama Deployment is Ready. The test Job first resolves the Service name,
 then tries the same Service from a Pod without the approved label.
 
+The original test accepts only a timeout. The K3s network-policy controller
+uses kube-router, whose iptables implementation rejects denied traffic.
+An unauthorized request sometimes returns `ConnectionRefusedError`.
+Connection refusal alone is not proof of a policy restriction: a Service
+without a working backend produces a similar result. Require successful
+approved requests to the same URL immediately before and after the test.
+
+Update the current timeout-only test from the repository root:
+
+```bash
+sed -i -e 's/except (TimeoutError, urllib.error.URLError)/except (TimeoutError, ConnectionRefusedError, urllib.error.URLError)/' -e 's/isinstance(reason, TimeoutError)/isinstance(reason, (TimeoutError, ConnectionRefusedError))/' -e 's/print("DNS resolved.*")/print("DNS resolved, unapproved connection failed:", repr(reason))/' ci/inference-network-denied-job.yaml
+git diff -- ci/inference-network-denied-job.yaml
+```
+
+This changes only the test's accepted network errors and its log message.
+HTTP responses, DNS failures, and other network errors still fail the test.
+No NetworkPolicy changes are required for this correction.
+
+Check approved access immediately before creating the denied Job:
+
+```bash
+mkdir -p docs/evidence
+set -o pipefail
+kubectl exec -n ai-lab deployment/ollama-inference-probe -c probe -- python -c $'from urllib.request import build_opener, ProxyHandler\nresponse = build_opener(ProxyHandler({})).open("http://ollama.ai-lab.svc.cluster.local:11434/api/version", timeout=5)\nprint(response.status)\nprint(response.read().decode())' | tee docs/evidence/ollama-inference-network-approved-before.txt
+```
+
+Expect `200` and JSON containing the Ollama version. Continue only after
+this succeeds. An approved-client error requires Service or policy diagnosis.
+
 ```bash
 kubectl get deployment ollama -n ai-lab
 kubectl delete job inference-network-denied -n ai-lab --ignore-not-found
 kubectl apply -f ci/inference-network-denied-job.yaml
-kubectl wait --for=condition=Complete job/inference-network-denied -n ai-lab --timeout=90s
-kubectl logs -n ai-lab job/inference-network-denied +  | tee docs/evidence/ollama-inference-network-denied.txt
-kubectl delete job inference-network-denied -n ai-lab
+if kubectl wait --for=condition=Complete job/inference-network-denied -n ai-lab --timeout=90s
+then
+  printf '%s\n' 'Job completed. Check its logs before recording a pass.'
+else
+  printf '%s\n' 'Job did not complete. Collect status, events, and logs below.'
+fi
+kubectl get job inference-network-denied -n ai-lab -o yaml | tee docs/evidence/ollama-inference-network-denied-job-status.yaml
+kubectl get pods -n ai-lab -l job-name=inference-network-denied -o wide
+kubectl describe pods -n ai-lab -l job-name=inference-network-denied | tee docs/evidence/ollama-inference-network-denied-pod-status.txt
+kubectl logs -n ai-lab job/inference-network-denied --container=check --pod-running-timeout=10s | tee docs/evidence/ollama-inference-network-denied.txt
 ```
 
-The expected log says DNS resolved and the unapproved request timed out.
-A DNS failure, connection refusal, or failed Job needs investigation. A
-successful HTTP request from this Pod means the intended restriction did
-not hold.
+Check approved access again immediately after collecting the denied result:
+
+```bash
+kubectl exec -n ai-lab deployment/ollama-inference-probe -c probe -- python -c $'from urllib.request import build_opener, ProxyHandler\nresponse = build_opener(ProxyHandler({})).open("http://ollama.ai-lab.svc.cluster.local:11434/api/version", timeout=5)\nprint(response.status)\nprint(response.read().decode())' | tee docs/evidence/ollama-inference-network-approved-after.txt
+```
+
+A passing result requires all three observations: approved HTTP 200 before
+the denied run, a completed denied Job whose log reports DNS resolution
+and `ConnectionRefusedError` or `TimeoutError`, and approved HTTP 200 after
+the denied run. Keep the actual refusal or timeout in the evidence.
+A completed Job alone is not proof of policy enforcement. DNS failures,
+unexpected errors, or either approved-client failure need investigation.
+Any HTTP response to the denied Pod, including an HTTP error response,
+means the restriction did not block its HTTP connection.
+
+A timeout from `kubectl wait` is not a passing denial test. Waiting for
+`Complete` also times out when the Job has entered `Failed`. The current
+test manifest sets `activeDeadlineSeconds: 60` and `backoffLimit: 0`.
+`DeadlineExceeded` means the Job reached its deadline. Pod events identify
+image-pull and scheduling problems. Require the approved requests and the
+completed denied result described above before recording a pass.
+
+Keep the Job until you have reviewed and saved the evidence. Its automatic
+cleanup runs 600 seconds after completion or failure. Deleting the Job also
+deletes its Pods. After recording a pass, clean up with:
+
+```bash
+kubectl delete job inference-network-denied -n ai-lab
+```
 
 ## Test the model-request alert
 
@@ -99,7 +165,7 @@ the probe a model name which is not installed:
 
 ```bash
 flux suspend kustomization ollama-inference-probe -n flux-system
-kubectl set env deployment/ollama-inference-probe -n ai-lab +  OLLAMA_MODEL=lab-missing-model:never-pulled
+kubectl set env deployment/ollama-inference-probe -n ai-lab OLLAMA_MODEL=lab-missing-model:never-pulled
 kubectl rollout status deployment/ollama-inference-probe -n ai-lab --timeout=180s
 kubectl logs -n ai-lab deployment/ollama-inference-probe --tail=5
 ```
@@ -116,8 +182,8 @@ the first failed check.
 Capture the firing state and logs:
 
 ```bash
-curl --fail --silent --show-error +  'http://127.0.0.1:19190/api/v1/rules?type=alert' +  | tee docs/evidence/ollama-inference-alert-firing.json
-kubectl logs -n ai-lab deployment/ollama-inference-probe --tail=10 +  > docs/evidence/ollama-inference-alert-failures.jsonl
+curl --connect-timeout 5 --max-time 15 --fail --silent --show-error 'http://127.0.0.1:19190/api/v1/rules?type=alert' | tee docs/evidence/ollama-inference-alert-firing.json
+kubectl logs -n ai-lab deployment/ollama-inference-probe --container=probe --tail=10 > docs/evidence/ollama-inference-alert-failures.jsonl
 ```
 
 Resume Flux and restore the repository configuration, even if an earlier
@@ -135,7 +201,7 @@ After a successful request and the next scrape/evaluation, the alert should
 return to inactive. Save the rules again:
 
 ```bash
-curl --fail --silent --show-error +  'http://127.0.0.1:19190/api/v1/rules?type=alert' +  | tee docs/evidence/ollama-inference-alert-recovered.json
+curl --connect-timeout 5 --max-time 15 --fail --silent --show-error 'http://127.0.0.1:19190/api/v1/rules?type=alert' | tee docs/evidence/ollama-inference-alert-recovered.json
 ```
 
 For a separate timeout test, repeat the suspension step and set
@@ -179,5 +245,7 @@ and alert rules. Keep the existing Ollama deployment and cache.
 - [Prometheus instrumentation](https://prometheus.io/docs/practices/instrumentation/)
 - [Ollama generation API](https://docs.ollama.com/api/generate)
 - [Kubernetes NetworkPolicies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+- [K3s network-policy controller](https://docs.k3s.io/networking/networking-services#network-policy-controller)
+- [kube-router Pod firewall implementation](https://github.com/cloudnativelabs/kube-router/blob/master/pkg/controllers/netpol/pod.go)
 - [Prometheus rule tests](https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/)
 - [Docker Official Python image definitions](https://github.com/docker-library/official-images/blob/master/library/python)
