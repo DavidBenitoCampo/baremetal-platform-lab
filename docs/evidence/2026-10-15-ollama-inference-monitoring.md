@@ -94,6 +94,37 @@ pending in the earlier recovery snapshot. Keep
 the final healthy state. The recorded samples do not establish the
 interruption's exact duration or cause.
 
+## Follow-up dashboard and resource captures
+
+The operator supplied two dashboard screenshots on 15 October 2026.
+The historical view selects Europe/Prague, from 2026-10-15 00:00 to 00:30.
+This corresponds to 2026-10-14 22:00 to 22:30 UTC. Its model-check result
+drops to 0 during failed checks and returns to 1 after recovery.
+
+![Historical inference dashboard](2026-10-15-ollama-inference-dashboard.png)
+
+The [separate current view](2026-10-15-ollama-inference-dashboard-current.png)
+uses the relative range `Last 1 hour` and shows a passed model check, a
+1.62-second last check, and zero firing inference alerts.
+
+Both screenshots show the dashboard before the panel color correction.
+The HTTP 200 value and generated-token count appear red because those panels
+used default numeric coloring.
+
+The later resource capture started at 2026-10-15 20:36:56 UTC,
+or 22:36:56 Europe/Prague. The operator ran `date -u`, then
+`kubectl top pods -n ai-lab --containers`. These readings describe
+normal operation after the earlier alert exercise.
+
+| Pod | Container | CPU | Memory |
+| --- | --- | --- | --- |
+| `ollama-76f6f79d6-zxmpt` | `ollama` | 1m | 678 MiB |
+| `ollama-inference-probe-5fb86f7749-fdcqx` | `probe` | 1m | 56 MiB |
+
+[Operator-supplied resource output](2026-10-15-inference-resources.txt).
+Here, 1m CPU means 0.001 CPU cores. The timestamp marks the start of the
+capture sequence. The output does not include the metrics sample timestamps.
+
 ## Measurement limits
 
 One recorded exercise was completed. The sample of ten scheduled requests
@@ -104,8 +135,9 @@ End-to-end detection delay and recovery duration were not measured. The
 observed pending-to-firing interval agrees with the configured 120-second hold.
 
 OS/kernel, K3s/Flux versions, deployed Ollama/probe image digests, clock
-synchronization, CPU and memory usage, power, and notification delivery were
-not measured in this run. No dashboard screenshot is included in this record.
+synchronization, power, and notification delivery were not measured in this
+run. The later CPU and memory capture is one normal-operation snapshot.
+Peak usage and resource usage during the failure exercise were not measured.
 
 ## Related procedure
 

@@ -125,8 +125,11 @@ alerts inactive. An earlier recovery snapshot captured the probe-unavailable
 alert pending before scrape recovery was confirmed.
 
 [Inference monitoring evidence](docs/evidence/2026-10-15-ollama-inference-monitoring.md)
-and [runbook](docs/runbooks/inference-monitoring.md). A screenshot of the
-inference dashboard and probe resource measurements still need recording.
+and [runbook](docs/runbooks/inference-monitoring.md). Follow-up captures
+include the dashboard history and a normal-operation resource snapshot from
+15 October 2026. The probe reported 1m CPU and 56 MiB memory. Ollama reported
+1m CPU and 678 MiB memory. These readings describe one point in normal
+operation.
 
 I tested `PodinfoUnavailable` by suspending Podinfo reconciliation and scaling the Deployment to zero. The alert moved through pending and firing. After resuming reconciliation, Podinfo returned to two replicas, HTTP requests succeeded, and the alert returned to inactive.
 
@@ -341,9 +344,8 @@ For a fresh build, start with the [bootstrap runbook](docs/runbooks/bootstrap.md
 I'm keeping each step small enough for the existing hardware and a four-hour weekly budget.
 
 1. Save Flux request acknowledgements after restore, add a second independent backup destination, and improve restore precondition error messages.
-2. Save a Grafana screenshot and probe CPU/memory samples for the deployed inference monitoring. The paired Ollama access check and alert firing/recovery exercise are recorded.
-3. Test a failed release recovered through Git and Flux, with continuous HTTP measurements.
-4. Extend VPN and NetworkPolicy restriction checks, add Flux schema validation, and pin runtime image digests.
+2. Test a failed release recovered through Git and Flux, with continuous HTTP measurements.
+3. Extend VPN and NetworkPolicy restriction checks, add Flux schema validation, and pin runtime image digests.
 
 After these checks, I'd like to add a small read-only assistant with one approved status-reading tool and a scoped identity. The current project covers model serving and operations. Agent execution is still future work.
 
