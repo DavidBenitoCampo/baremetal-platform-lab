@@ -101,18 +101,32 @@ CI runs without Pi credentials or a connection to the cluster. Flux custom-resou
 
 ### Monitoring and an outage alert
 
-Prometheus scrapes three targets every 30 seconds: Prometheus itself, kube-state-metrics, and kube-state-metrics telemetry. All three returned `up = 1`.
+Prometheus is configured to scrape four targets every 30 seconds: Prometheus itself, kube-state-metrics, kube-state-metrics telemetry, and the Ollama inference probe. The original monitoring check recorded the first three targets with `up = 1`. The inference exercise later confirmed `up = 1` for the new probe.
 
 The Grafana dashboard shows scrape health, available replicas, container restarts, and Bound PVCs. Its datasource and dashboard configuration live in Git.
 
-Scheduled inference monitoring is prepared in
-`kubernetes/ai/inference-probe/`. A small Python service asks the model a
-short question once a minute and exports the result, duration, and counters.
+The scheduled inference probe runs in `ai-lab` from
+`kubernetes/ai/inference-probe/`. A small Python service asks `qwen2.5:0.5b`
+a short question once a minute and exports the result, duration, and counters.
 The additional **Ollama Inference Checks** dashboard shows those scheduled
 requests. Alerts cover failed requests, an unavailable exporter, and stale
-results. Live deployment and the firing/recovery test still need Pi evidence.
+results.
 
-Follow [the inference monitoring runbook](docs/runbooks/inference-monitoring.md).
+On 15 October 2026, Prague time, I recorded ten successful scheduled requests.
+Each returned HTTP 200 and generated 16 tokens, with durations from 1.426 to
+1.877 seconds. These checks use a 16-token output limit, separate from the
+earlier manual inference benchmark.
+
+I then selected a missing model. The probe recorded HTTP 404 and
+`ollama_probe_success = 0`. `OllamaInferenceCheckFailing` moved from pending
+to firing after holding the condition for two minutes. Resuming Flux restored the working model.
+The final checks showed successful inference, `up = 1`, and all three Ollama
+alerts inactive. An earlier recovery snapshot captured the probe-unavailable
+alert pending before scrape recovery was confirmed.
+
+[Inference monitoring evidence](docs/evidence/2026-10-15-ollama-inference-monitoring.md)
+and [runbook](docs/runbooks/inference-monitoring.md). A screenshot of the
+inference dashboard and probe resource measurements still need recording.
 
 I tested `PodinfoUnavailable` by suspending Podinfo reconciliation and scaling the Deployment to zero. The alert moved through pending and firing. After resuming reconciliation, Podinfo returned to two replicas, HTTP requests succeeded, and the alert returned to inactive.
 
@@ -127,7 +141,7 @@ I tested `PodinfoUnavailable` by suspending Podinfo reconciliation and scaling t
 
 The alert history uses five-second query steps. The times describe sampled observations from this controlled outage, rather than exact state-transition times or production availability.
 
-The alert currently appears in Prometheus. Alertmanager and notification delivery have not been added. The three scrape targets don't include an Ollama inference check.
+The alert exercises were observed in Prometheus. Alertmanager and notification delivery have not been added.
 
 [HTTP samples](docs/evidence/podinfo-alert-http.jsonl) · [Alert history](docs/evidence/podinfo-alert-history.json) · [Cleared alert](docs/evidence/podinfo-alert-recovered.json) · [Final workload state](docs/evidence/podinfo-alert-final-state.txt)
 
@@ -282,11 +296,18 @@ K3s Secrets encryption is enabled. Ollama and the monitoring containers declare 
 | Prometheus | 100m / 500m | 256 MiB / 512 MiB |
 | kube-state-metrics | 50m / 500m | 128 MiB / 256 MiB |
 | Grafana | 100m / 500m | 256 MiB / 512 MiB |
-| Inference probe, prepared | 25m / 100m | 32 MiB / 64 MiB |
+| Inference probe | 25m / 100m | 32 MiB / 64 MiB |
 
 These values come from the manifests. They are not observed peak usage. Ollama permits one loaded model and one parallel request.
 
-NetworkPolicies are configured, but their enforcement tests are pending. Runtime images use version tags. Immutable image digest pinning and narrower Flux reconciliation identities are future work.
+The Ollama NetworkPolicy check used two clients in `ai-lab`. The approved
+probe reached `/api/version` with HTTP 200 before and after an unapproved
+Pod resolved DNS and received a connection refusal. The denied Job reached
+`Complete`. This exercise covers these clients and Ollama's Service port
+11434. Other NetworkPolicy paths and VPN denial checks still need evidence.
+
+Runtime images use version tags. Immutable image digest pinning and narrower
+Flux reconciliation identities are future work.
 
 ## Storage and reliability limits
 
@@ -320,9 +341,9 @@ For a fresh build, start with the [bootstrap runbook](docs/runbooks/bootstrap.md
 I'm keeping each step small enough for the existing hardware and a four-hour weekly budget.
 
 1. Save Flux request acknowledgements after restore, add a second independent backup destination, and improve restore precondition error messages.
-2. Deploy the scheduled inference probe and record its dashboard, denied-Pod check, and alert firing/recovery test. The manual CPU, memory, missing-model, and timeout checks are recorded.
+2. Save a Grafana screenshot and probe CPU/memory samples for the deployed inference monitoring. The paired Ollama access check and alert firing/recovery exercise are recorded.
 3. Test a failed release recovered through Git and Flux, with continuous HTTP measurements.
-4. Verify VPN and NetworkPolicy restrictions, add Flux schema validation, and pin runtime image digests.
+4. Extend VPN and NetworkPolicy restriction checks, add Flux schema validation, and pin runtime image digests.
 
 After these checks, I'd like to add a small read-only assistant with one approved status-reading tool and a scoped identity. The current project covers model serving and operations. Agent execution is still future work.
 

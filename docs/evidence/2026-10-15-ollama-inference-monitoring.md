@@ -3,7 +3,7 @@
 Status: observed checks passed.
 
 Exercise completed: 2026-10-15, Europe/Prague. The UTC timeline below falls on
-2026-10-14. Sources are terminal output supplied by the operator and the
+2026-10-14. Sources are the operator's terminal observations and the
 referenced captures in this directory.
 
 Operator: David Benito Campo, workstation `badbeny@F42Prague`.
@@ -32,10 +32,9 @@ and up to 16 generated tokens. Prometheus scrapes and evaluates rules every
 5. Resume and reconcile the probe's Flux Kustomization.
 6. Verify model requests, scrape health, and final alert states.
 
-The raw failure log is saved as
-[ollama-inference-alert-failures.jsonl](ollama-inference-alert-failures.jsonl).
-Its contents were not included in the supplied terminal output. Confirm the
-missing-model HTTP 404 entry in this capture when reviewing the commit.
+The [failure log](ollama-inference-alert-failures.jsonl) confirms
+`lab-missing-model:never-pulled` returned `http_error` with HTTP 404 at
+2026-10-14T22:12:11.756694Z. The failed request generated zero tokens.
 
 ## Observed results
 
@@ -47,6 +46,7 @@ missing-model HTTP 404 entry in this capture when reviewing the commit.
 | Approved access before denial | HTTP 200, Ollama version 0.40.0 | Operator terminal output, no separate before-file captured |
 | Unapproved access | DNS resolved, request returned `ConnectionRefusedError(111, 'Connection refused')`, and Job reached `Complete` | [Denied-client log](ollama-inference-network-denied.txt) |
 | Approved access after denial | HTTP 200, Ollama version 0.40.0 | [Approved-client output](ollama-inference-network-approved-after.txt) |
+| Missing-model failure | `http_error`, HTTP 404, zero generated tokens | [Failure log](ollama-inference-alert-failures.jsonl) |
 | Inference alert | Pending, then firing with a probe success value of 0 | [Pending](ollama-inference-alert-pending.json), [firing](ollama-inference-alert-firing.json) |
 | Model recovery | HTTP 200, `qwen2.5:0.5b`, 16 generated tokens | [Recovery log](ollama-inference-alert-recovered.jsonl) |
 | Flux recovery | `SUSPENDED=False`, `READY=True`, expected Git revision applied | Operator terminal output |
@@ -63,6 +63,7 @@ states. They do not establish the exact time of every transition.
 | --- | --- | --- |
 | First of ten captured baseline successes | 22:00:39.672185 | Baseline probe log |
 | Last of ten captured baseline successes | 22:09:39.675667 | Baseline probe log |
+| Missing-model HTTP 404 recorded | 22:12:11.756694 | Failure probe log |
 | Model-failure alert entered pending | 22:12:52.964264 | Alert `activeAt` |
 | Firing confirmed by evaluation | 22:14:52.965997 | Firing rule snapshot |
 | First captured successful request after Git recovery | 22:18:32.923609 | Recovery probe log |
@@ -78,8 +79,9 @@ reported `BackoffLimitExceeded`.
 
 The corrected Job accepts timeout or connection refusal, including wrapped
 `urllib.error.URLError` cases. DNS failures, unexpected network errors, and
-HTTP 200 and HTTP 404 responses still fail the check. The runbook requires successful requests
-from the approved client immediately before and after the denied run.
+HTTP 200 and HTTP 404 responses still fail the check. The runbook requires
+successful requests from the approved client immediately before and after
+the denied run.
 
 The paired client checks support the intended access restriction for these
 tested clients and this Service path. A refusal or a completed Job on its own
@@ -88,9 +90,9 @@ does not establish policy enforcement.
 During recovery, a successful model request and an inactive inference-failure
 alert preceded confirmed scrape recovery. The probe-unavailable alert was
 pending in the earlier recovery snapshot. Keep
-[the pending snapshot](ollama-inference-alert-recovery-pending.json) alongside the
-final healthy state. The supplied samples do not establish the interruption's
-exact duration or cause.
+[the pending snapshot](ollama-inference-alert-recovery-pending.json) alongside
+the final healthy state. The recorded samples do not establish the
+interruption's exact duration or cause.
 
 ## Measurement limits
 
@@ -101,9 +103,9 @@ The exact fault-injection and recovery-command timestamps were not captured.
 End-to-end detection delay and recovery duration were not measured. The
 observed pending-to-firing interval agrees with the configured 120-second hold.
 
-OS/kernel, K3s/Flux versions, deployed Ollama/probe image digests, clock synchronization, CPU and
-memory usage, power, and notification delivery were not measured in this run.
-No dashboard screenshot is included in the supplied evidence.
+OS/kernel, K3s/Flux versions, deployed Ollama/probe image digests, clock
+synchronization, CPU and memory usage, power, and notification delivery were
+not measured in this run. No dashboard screenshot is included in this record.
 
 ## Related procedure
 
