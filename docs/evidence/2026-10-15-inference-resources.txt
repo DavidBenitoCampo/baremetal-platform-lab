@@ -1,0 +1,4 @@
+Thu Oct 15 08:36:56 PM UTC 2026
+POD                                       NAME     CPU(cores)   MEMORY(bytes)
+ollama-76f6f79d6-zxmpt                      ollama   1m           678Mi
+ollama-inference-probe-5fb86f7749-fdcqx      probe    1m           56Mi
