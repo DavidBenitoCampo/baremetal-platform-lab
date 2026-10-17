@@ -112,11 +112,17 @@ jobs:
       - name: Check Python syntax
         run: python -m compileall -q scripts kubernetes/ai/inference-probe tests
 
-      - name: Test inference probe
+      - name: Test Python helpers
         run: python -m unittest discover -s tests -v
 
       - name: Check shell syntax
-        run: bash -n scripts/preflight.sh
+        run: |
+          for script in scripts/*.sh; do
+            bash -n "$script"
+          done
+
+      - name: Check workstation tunnel service
+        run: systemd-analyze verify workstation/systemd/pi-lab-tunnels.service
 
       - name: Check evidence JSONL
         run: |

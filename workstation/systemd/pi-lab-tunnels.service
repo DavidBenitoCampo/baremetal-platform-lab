@@ -1,0 +1,25 @@
+[Unit]
+Description=Pi lab API and Podinfo SSH tunnels
+StartLimitIntervalSec=0
+
+[Service]
+Type=exec
+ExecStart=/usr/bin/ssh -NT \
+    -o BatchMode=yes \
+    -o IdentitiesOnly=yes \
+    -o ControlPath=none \
+    -o ExitOnForwardFailure=yes \
+    -o ConnectTimeout=10 \
+    -o ConnectionAttempts=1 \
+    -o ServerAliveInterval=15 \
+    -o ServerAliveCountMax=3 \
+    -i "%h/.ssh/pi_lab_ed25519" \
+    -L 127.0.0.1:16443:127.0.0.1:6443 \
+    -L 127.0.0.1:18082:10.0.1.16:80 \
+    lab@100.90.135.106
+Restart=always
+RestartSec=5
+TimeoutStopSec=10
+
+[Install]
+WantedBy=default.target
