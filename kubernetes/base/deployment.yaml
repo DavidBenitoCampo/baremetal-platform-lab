@@ -59,7 +59,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /readyz
-              port: 9990
+              port: http
             periodSeconds: 5
             timeoutSeconds: 2
             failureThreshold: 2
