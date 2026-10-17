@@ -158,6 +158,12 @@ During testing, an old port-forward occupied a port on the Pi. Another attempt f
 
 I also tested workstation `kubectl` and `flux` access from outside my home network through an SSH tunnel to the Kubernetes API. The VPN kubeconfig uses local port 16443 and verifies the Pi's certificate using its LAN identity.
 
+The [workstation access runbook](docs/runbooks/workstation-access.md) installs
+a user service for the API and Podinfo HTTP tunnels. The service starts at
+login and restarts SSH after a disconnect. `pi-kubectl` and `pi-flux` select
+the Pi kubeconfig for each command. Workstation installation, reboot, and
+reconnection checks are still pending.
+
 VPN reboot persistence and denied-access tests have not been recorded.
 
 [VPN access evidence](docs/evidence/2026-10-11-vpn-access.md) · [Prometheus result over VPN](docs/evidence/prometheus-over-vpn.json)
@@ -239,16 +245,19 @@ ssh -i ~/.ssh/pi_lab_ed25519 lab@100.90.135.106 \
   'sudo -n k3s kubectl get gitrepositories,kustomizations -A'
 ```
 
-Workstation `kubectl` and `flux` also work through the VPN API tunnel. Open the tunnel following the [post-restore checks](docs/runbooks/post-restore-checks.md), then select the separate VPN kubeconfig:
+For workstation access through Tailscale, install the managed tunnels once
+using the [workstation access runbook](docs/runbooks/workstation-access.md).
+Then run:
 
 ```bash
-export KUBECONFIG="$HOME/.kube/pi-lab-vpn.yaml"
-
-kubectl get nodes
-flux get kustomizations -A
+pi-lab-check
+pi-kubectl get nodes
+pi-flux get kustomizations -A
 ```
 
-Keep the tunnel terminal open. The VPN kubeconfig stays outside the repository.
+The service owns the tunnels independently of your terminals. The VPN
+kubeconfig stays outside the repository. Use the [post-restore checks](docs/runbooks/post-restore-checks.md)
+after a K3s restore.
 
 For Podinfo on the home LAN, the workstation resolves `podinfo.lab.test` to the Pi's LAN address:
 
@@ -334,6 +343,7 @@ A production deployment would need separate failure domains, independent monitor
 - `monitoring/prometheus/`: Prometheus, kube-state-metrics, Grafana, dashboards, and alert rules.
 - `.github/workflows/` and `ci/`: validation and tool configuration.
 - `scripts/`: preflight, HTTP checks, inference measurements, and K3s backup, verification, and restore helpers.
+- `workstation/systemd/`: the workstation managed SSH tunnel service.
 - `docs/`: evidence, runbooks, decisions, and incident templates.
 - `versions.yaml`: version notes, including proposed components. The deployed manifests show the running choices.
 

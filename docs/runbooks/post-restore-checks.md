@@ -6,39 +6,29 @@ The K3s service should already be running. Backup extraction belongs to a
 
 The goal is to verify remote access, workload readiness, and Flux synchronization.
 
-## Open the API tunnel
+## Check workstation access
 
-Run this on the workstation. Replace `PI_TAILSCALE_IP` with the Pi's Tailscale
-address. Keep this terminal open while using Kubernetes commands.
-
-```bash
-ssh -N -i "$HOME/.ssh/pi_lab_ed25519" \
-  -o ExitOnForwardFailure=yes \
-  -L 127.0.0.1:16443:127.0.0.1:6443 \
-  lab@PI_TAILSCALE_IP
-```
-
-The tunnel listens on workstation port 16443 and forwards requests to the
-Pi's Kubernetes API on port 6443. An open connection normally produces no output.
-
-In a second workstation terminal, select the existing VPN kubeconfig:
+Install the [managed workstation tunnels](workstation-access.md) once.
+The user service owns the API and Podinfo HTTP tunnels. The Pi command
+helpers below select the VPN kubeconfig explicitly in every terminal.
 
 ```bash
-export KUBECONFIG="$HOME/.kube/pi-lab-vpn.yaml"
+systemctl --user start pi-lab-tunnels.service
+pi-lab-check
 ```
 
-For this lab, the VPN kubeconfig uses server `https://127.0.0.1:16443` and
-TLS server name `10.0.1.16`. Certificate verification stays enabled.
-Keep this file outside the repository.
+If the check fails while K3s is starting, inspect the service journal and
+retry after the API and workloads recover. The SSH-based checks below
+also work without the workstation helpers.
 
 ## Check Kubernetes
 
 These commands read the node and workload state:
 
 ```bash
-kubectl wait --for=condition=Ready node/pi-lab --timeout=180s
-kubectl get nodes
-kubectl get deployments -A
+pi-kubectl wait --for=condition=Ready node/pi-lab --timeout=180s
+pi-kubectl get nodes
+pi-kubectl get deployments -A
 ```
 
 Expected state: node `pi-lab` is Ready, Podinfo has two ready replicas, and
@@ -51,10 +41,10 @@ The first command asks source-controller to fetch GitHub. The second asks
 kustomize-controller to apply the root configuration from `clusters/pi`.
 
 ```bash
-flux reconcile source git flux-system -n flux-system
-flux reconcile kustomization flux-system -n flux-system
-flux get sources git -A
-flux get kustomizations -A
+pi-flux reconcile source git flux-system -n flux-system
+pi-flux reconcile kustomization flux-system -n flux-system
+pi-flux get sources git -A
+pi-flux get kustomizations -A
 ```
 
 Compare the Git source revision with the current GitHub `main` commit.
@@ -92,9 +82,9 @@ Every `HANDLED` value should equal its `REQUESTED` value. The source and all fou
 Save the errors before restarting a controller:
 
 ```bash
-kubectl get pods -n flux-system
-kubectl logs -n flux-system deployment/source-controller --since=20m --tail=50
-kubectl logs -n flux-system deployment/kustomize-controller --since=20m --tail=50
+pi-kubectl get pods -n flux-system
+pi-kubectl logs -n flux-system deployment/source-controller --since=20m --tail=50
+pi-kubectl logs -n flux-system deployment/kustomize-controller --since=20m --tail=50
 ```
 
 In the 11 October 2026 test, the controllers were running, but reconciliation
@@ -104,11 +94,11 @@ They had not restarted after restoring the older database.
 For this observed failure, restart the affected controllers one at a time:
 
 ```bash
-kubectl rollout restart deployment/source-controller -n flux-system
-kubectl rollout status deployment/source-controller -n flux-system --timeout=180s
+pi-kubectl rollout restart deployment/source-controller -n flux-system
+pi-kubectl rollout status deployment/source-controller -n flux-system --timeout=180s
 
-kubectl rollout restart deployment/kustomize-controller -n flux-system
-kubectl rollout status deployment/kustomize-controller -n flux-system --timeout=180s
+pi-kubectl rollout restart deployment/kustomize-controller -n flux-system
+pi-kubectl rollout status deployment/kustomize-controller -n flux-system --timeout=180s
 ```
 
 `rollout restart` requests a replacement Pod. `rollout status` waits for the
@@ -127,7 +117,7 @@ ssh -i "$HOME/.ssh/pi_lab_ed25519" lab@PI_TAILSCALE_IP \
 From the repository root on the workstation:
 
 ```bash
-flux get kustomizations -A | tee docs/evidence/flux-after-restore.txt
+pi-flux get kustomizations -A | tee docs/evidence/flux-after-restore.txt
 ```
 
 Node and Deployment readiness verify Kubernetes state. Verify an inference
