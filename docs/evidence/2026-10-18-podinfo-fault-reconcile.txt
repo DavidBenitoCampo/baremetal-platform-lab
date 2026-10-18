@@ -1,0 +1,8 @@
+► annotating GitRepository flux-system in flux-system namespace
+✔ GitRepository annotated
+◎ waiting for GitRepository reconciliation
+✔ fetched revision main@sha1:33b9066d846ad9bf036bdfdf1db379c469314a0f
+► annotating Kustomization podinfo in flux-system namespace
+✔ Kustomization annotated
+◎ waiting for Kustomization reconciliation
+✗ context deadline exceeded

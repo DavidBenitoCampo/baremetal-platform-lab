@@ -1,0 +1,2 @@
+NAME   	REVISION          	SUSPENDED	READY	MESSAGE                                                                                                                           
+podinfo	main@sha1:848901cb	False    	False	health check failed after 37.168268ms: failed early due to stalled resources: [Deployment/platform-demo/podinfo status: 'Failed']	
