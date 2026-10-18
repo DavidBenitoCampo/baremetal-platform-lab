@@ -1,0 +1,2 @@
+NAME   	REVISION          	SUSPENDED	READY	MESSAGE                              
+podinfo	main@sha1:5b42bd0e	False    	True 	Applied revision: main@sha1:5b42bd0e	

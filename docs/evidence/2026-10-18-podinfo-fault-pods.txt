@@ -1,0 +1,4 @@
+NAME                       READY   STATUS    RESTARTS      AGE     IP           NODE     NOMINATED NODE   READINESS GATES
+podinfo-558bc748c7-hjfc2   0/1     Running   0             21m     10.42.0.83   pi-lab   <none>           <none>
+podinfo-f6556bc69-6vt7m    1/1     Running   8 (26h ago)   7d21h   10.42.0.66   pi-lab   <none>           <none>
+podinfo-f6556bc69-wqgsg    1/1     Running   8 (26h ago)   7d21h   10.42.0.69   pi-lab   <none>           <none>

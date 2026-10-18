@@ -1,0 +1,6 @@
+{"type": "sample", "index": 291, "utc": "2026-10-18T20:28:19.513888+00:00", "status": null, "ok": false, "latency_ms": 801.89, "schedule_delay_ms": 0.37, "error": "timed out"}
+{"type": "sample", "index": 292, "utc": "2026-10-18T20:28:20.513629+00:00", "status": null, "ok": false, "latency_ms": 801.83, "schedule_delay_ms": 0.11, "error": "timed out"}
+{"type": "sample", "index": 293, "utc": "2026-10-18T20:28:21.513927+00:00", "status": null, "ok": false, "latency_ms": 801.85, "schedule_delay_ms": 0.4, "error": "timed out"}
+{"type": "sample", "index": 294, "utc": "2026-10-18T20:28:22.513621+00:00", "status": null, "ok": false, "latency_ms": 801.57, "schedule_delay_ms": 0.11, "error": "timed out"}
+{"type": "sample", "index": 295, "utc": "2026-10-18T20:28:23.513645+00:00", "status": null, "ok": false, "latency_ms": 801.13, "schedule_delay_ms": 0.12, "error": "timed out"}
+{"type": "sample", "index": 296, "utc": "2026-10-18T20:28:24.513618+00:00", "status": null, "ok": false, "latency_ms": 801.2, "schedule_delay_ms": 0.1, "error": "timed out"}

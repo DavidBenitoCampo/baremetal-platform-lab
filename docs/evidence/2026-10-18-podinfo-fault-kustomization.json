@@ -1,0 +1,121 @@
+{
+    "apiVersion": "kustomize.toolkit.fluxcd.io/v1",
+    "kind": "Kustomization",
+    "metadata": {
+        "annotations": {
+            "reconcile.fluxcd.io/requestedAt": "2026-10-18T22:05:38.076253951+02:00"
+        },
+        "creationTimestamp": "2026-10-08T18:20:15Z",
+        "finalizers": [
+            "finalizers.fluxcd.io"
+        ],
+        "generation": 3,
+        "labels": {
+            "kustomize.toolkit.fluxcd.io/name": "flux-system",
+            "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+        },
+        "name": "podinfo",
+        "namespace": "flux-system",
+        "resourceVersion": "600323",
+        "uid": "67f1a77d-9bd6-4e8e-a43c-06d26534657a"
+    },
+    "spec": {
+        "force": false,
+        "healthChecks": [
+            {
+                "apiVersion": "apps/v1",
+                "kind": "Deployment",
+                "name": "podinfo",
+                "namespace": "platform-demo"
+            }
+        ],
+        "interval": "1m",
+        "path": "./kubernetes/overlays/pi",
+        "prune": true,
+        "sourceRef": {
+            "kind": "GitRepository",
+            "name": "flux-system"
+        },
+        "timeout": "3m"
+    },
+    "status": {
+        "conditions": [
+            {
+                "lastTransitionTime": "2026-10-18T20:22:43Z",
+                "message": "Running health checks for revision main@sha1:33b9066d846ad9bf036bdfdf1db379c469314a0f with a timeout of 3m0s",
+                "observedGeneration": 3,
+                "reason": "ProgressingWithRetry",
+                "status": "True",
+                "type": "Reconciling"
+            },
+            {
+                "lastTransitionTime": "2026-10-18T20:22:43Z",
+                "message": "health check failed after 45.321039ms: failed early due to stalled resources: [Deployment/platform-demo/podinfo status: 'Failed']",
+                "observedGeneration": 3,
+                "reason": "HealthCheckFailed",
+                "status": "False",
+                "type": "Ready"
+            },
+            {
+                "lastTransitionTime": "2026-10-18T20:22:43Z",
+                "message": "failed early due to stalled resources: [Deployment/platform-demo/podinfo status: 'Failed']",
+                "observedGeneration": 3,
+                "reason": "HealthCheckFailed",
+                "status": "False",
+                "type": "Healthy"
+            }
+        ],
+        "history": [
+            {
+                "digest": "sha256:b0a1b335e93cab3e520ec56b58514e4621e3c363a63c4d42bd885ce048ffafc5",
+                "firstReconciled": "2026-10-15T22:44:19Z",
+                "lastReconciled": "2026-10-18T20:22:43Z",
+                "lastReconciledDuration": "294.99879ms",
+                "lastReconciledStatus": "HealthCheckFailed",
+                "metadata": {
+                    "revision": "main@sha1:33b9066d846ad9bf036bdfdf1db379c469314a0f"
+                },
+                "totalReconciliations": 104
+            },
+            {
+                "digest": "sha256:676443f89b5f9df8c126d12b1075ca89bfbbde755b273040a7b877ea571e5288",
+                "firstReconciled": "2026-10-08T18:20:17Z",
+                "lastReconciled": "2026-10-18T20:01:21Z",
+                "lastReconciledDuration": "282.530106ms",
+                "lastReconciledStatus": "ReconciliationSucceeded",
+                "metadata": {
+                    "revision": "main@sha1:848901cbfe58515ce5e5ba3acf6c42ac4bc142bc"
+                },
+                "totalReconciliations": 5309
+            }
+        ],
+        "inventory": {
+            "entries": [
+                {
+                    "id": "_platform-demo__Namespace",
+                    "v": "v1"
+                },
+                {
+                    "id": "platform-demo_podinfo__Service",
+                    "v": "v1"
+                },
+                {
+                    "id": "platform-demo_podinfo_apps_Deployment",
+                    "v": "v1"
+                },
+                {
+                    "id": "platform-demo_podinfo_policy_PodDisruptionBudget",
+                    "v": "v1"
+                },
+                {
+                    "id": "platform-demo_podinfo_networking.k8s.io_Ingress",
+                    "v": "v1"
+                }
+            ]
+        },
+        "lastAppliedRevision": "main@sha1:848901cbfe58515ce5e5ba3acf6c42ac4bc142bc",
+        "lastAttemptedRevision": "main@sha1:33b9066d846ad9bf036bdfdf1db379c469314a0f",
+        "lastHandledReconcileAt": "2026-10-18T22:05:38.076253951+02:00",
+        "observedGeneration": 3
+    }
+}
