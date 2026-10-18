@@ -55,6 +55,29 @@ Expected result: the deployment first shows one desired replica. Flux restores
 the declared replica count of two. The Podinfo Kustomization returns Ready.
 Record the observed times. One Pi does not provide host-level availability.
 
+## Failed release and Git recovery
+
+The [18 October exercise](../incidents/2026-10-18-podinfo-failed-release.md)
+records a readiness probe set to unused port 9990 through Git. The new Pod
+stayed unready, the Deployment reported `ProgressDeadlineExceeded`, and
+Flux reported a failed health check. Restoring the working readiness port
+in Git returned the Deployment and Flux to a healthy state.
+
+The first HTTP capture recorded 1,800 successful requests. The recovery
+capture recorded 1,194 successful requests and six timeouts after the
+Deployment had recovered. The timeout cause is unconfirmed. The report
+also records the gap between the two captures.
+
+For another exercise, use the [workstation helpers](workstation-access.md)
+to select the Pi kubeconfig. Keep one HTTP capture running from before the
+fault merge until after recovery. Verify fresh timestamps and increasing
+sample indices before each merge.
+
+Save the Kustomization JSON when reconciliation fails. Compare
+`lastAppliedRevision` with `lastAttemptedRevision`. The revision column in
+`flux get kustomization` shows the last successful revision during this
+failed health check.
+
 ## Troubleshooting
 
 ```bash

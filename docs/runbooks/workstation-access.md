@@ -112,8 +112,16 @@ systemctl --user disable --now pi-lab-tunnels.service
 
 ## Verify persistence on the workstation
 
-Workstation verification is pending. CI checks syntax and helper behavior
-without contacting the Pi or starting a user service.
+On 18 October, I verified installation and automatic restart after terminating
+SSH. The service reported enabled and active. Its main process changed from
+PID 40318 to PID 108576, and the restart counter increased from zero to one.
+After restart, the API, node, and Podinfo checks passed.
+
+The [operator-provided transcript](../evidence/2026-10-18-workstation-access.txt)
+records the outputs pasted in chat. Exact restart duration, workstation reboot,
+terminal closure, and network disconnect checks have not been recorded.
+CI checks syntax and helper behavior without contacting the Pi or starting
+a user service.
 
 1. Run `pi-lab-check`, close the terminal, open a new terminal, and repeat
    the check and `pi-kubectl get nodes`.
