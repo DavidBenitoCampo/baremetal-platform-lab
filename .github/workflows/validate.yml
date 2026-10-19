@@ -62,8 +62,7 @@ jobs:
         run: |
           yamllint --strict -c ci/yamllint.yaml \
             .github/workflows ansible kubernetes ci versions.yaml \
-            monitoring/prometheus clusters/pi/monitoring.yaml \
-            clusters/pi/inference-probe.yaml
+            monitoring/prometheus clusters/pi
 
       - name: Check Ansible syntax
         run: ansible-playbook -i ansible/inventory.example.ini ansible/host.yml --syntax-check
@@ -75,6 +74,9 @@ jobs:
           kubectl kustomize kubernetes/ai/ollama > "$RUNNER_TEMP/manifests/ollama.yaml"
           kubectl kustomize kubernetes/ai/inference-probe > "$RUNNER_TEMP/manifests/inference-probe.yaml"
           kubectl kustomize monitoring/prometheus > "$RUNNER_TEMP/manifests/monitoring.yaml"
+
+      - name: Validate Flux resources
+        run: python ci/validate_flux.py
 
       - name: Validate Kubernetes fields
         run: |

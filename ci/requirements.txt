@@ -10,3 +10,4 @@ pycparser==3.0
 PyYAML==6.0.3
 resolvelib==1.2.1
 yamllint==1.38.0
+jsonschema==4.26.0
