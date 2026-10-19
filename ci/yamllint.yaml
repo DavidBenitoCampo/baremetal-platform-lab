@@ -4,6 +4,9 @@ rules:
   document-start: disable
   line-length: disable
   comments-indentation: disable
+  indentation:
+    spaces: 2
+    indent-sequences: consistent
   truthy:
     allowed-values: ['true', 'false']
     check-keys: false
