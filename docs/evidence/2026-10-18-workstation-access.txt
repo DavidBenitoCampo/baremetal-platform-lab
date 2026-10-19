@@ -1,0 +1,35 @@
+Operator-provided command output, 18 October 2026, Europe/Prague.
+Transcript assembled from the outputs pasted in chat.
+Command timestamps, restart duration, and reboot confirmation were not supplied.
+
+systemctl --user is-enabled pi-lab-tunnels.service
+enabled
+
+systemctl --user is-active pi-lab-tunnels.service
+active
+
+pi-kubectl get nodes
+NAME     STATUS   ROLES           AGE   VERSION
+pi-lab   Ready    control-plane   11d   v1.36.5+k3s1
+
+pi-flux get kustomizations -A
+All five Kustomizations reported Ready=True and Suspended=False at main@sha1:848901cb:
+flux-system, monitoring, ollama, ollama-inference-probe, podinfo.
+
+Before forced SSH termination:
+systemctl --user show pi-lab-tunnels.service -p MainPID -p NRestarts
+MainPID=40318
+NRestarts=0
+
+After forced SSH termination:
+systemctl --user show pi-lab-tunnels.service -p MainPID -p NRestarts
+MainPID=108576
+NRestarts=1
+
+Post-restart pi-lab-check output:
+Pi API reachable. Node pi-lab Ready.
+Podinfo HTTP 200. Access checks passed.
+
+Later pi-lab-check output, after the completed recovery capture:
+Pi API reachable. Node pi-lab Ready.
+Podinfo HTTP 200. Access checks passed.

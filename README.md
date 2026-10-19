@@ -43,9 +43,24 @@ For Podinfo, I tested a rolling update from 6.14.1 to 6.15.0, then deliberately 
 
 I restored the working manifest from Git and applied the change. This happened before Flux was installed. I also deleted a Pod and checked its replacement.
 
-These release checks used individual HTTP requests. I haven't measured continuous traffic during the rolling update.
+These earlier release checks used individual HTTP requests.
 
 [Cluster and release evidence](docs/evidence/2026-10-07-initial-cluster.md)
+
+On 18 October, I tested a failed readiness release through Git and Flux. The
+failed snapshot showed one new Pod unready and two previous Pods Ready.
+Flux reported a failed Deployment health check. Restoring the working
+readiness port in Git returned the Deployment and Flux to a healthy state.
+
+The first HTTP capture recorded 1,800 HTTP 200 responses with no failures.
+The recovery capture recorded 1,194 HTTP 200 responses and six consecutive
+timeouts. The recorded timestamps place those timeouts about three minutes
+after the Deployment recovered. Their cause is still unknown. The two logs
+have 40.635 seconds between their boundary sample starts.
+
+[Failed release and Git recovery evidence](docs/incidents/2026-10-18-podinfo-failed-release.md)
+
+I have not measured a successful version update with continuous HTTP requests.
 
 ### Inference and model persistence
 
@@ -161,8 +176,12 @@ I also tested workstation `kubectl` and `flux` access from outside my home netwo
 The [workstation access runbook](docs/runbooks/workstation-access.md) installs
 a user service for the API and Podinfo HTTP tunnels. The service starts at
 login and restarts SSH after a disconnect. `pi-kubectl` and `pi-flux` select
-the Pi kubeconfig for each command. Workstation installation, reboot, and
-reconnection checks are still pending.
+the Pi kubeconfig for each command. On 18 October, I verified installation
+and automatic restart after terminating SSH. The restart counter increased
+from zero to one, and the API, node, and Podinfo checks passed again.
+Workstation reboot and network disconnect checks have not been recorded.
+
+[Operator-provided access check transcript](docs/evidence/2026-10-18-workstation-access.txt)
 
 VPN reboot persistence and denied-access tests have not been recorded.
 
@@ -354,7 +373,7 @@ For a fresh build, start with the [bootstrap runbook](docs/runbooks/bootstrap.md
 I'm keeping each step small enough for the existing hardware and a four-hour weekly budget.
 
 1. Save Flux request acknowledgements after restore, add a second independent backup destination, and improve restore precondition error messages.
-2. Test a failed release recovered through Git and Flux, with continuous HTTP measurements.
+2. Investigate the six HTTP timeouts after Deployment recovery and measure a successful version update with continuous HTTP requests.
 3. Extend VPN and NetworkPolicy restriction checks, add Flux schema validation, and pin runtime image digests.
 
 After these checks, I'd like to add a small read-only assistant with one approved status-reading tool and a scoped identity. The current project covers model serving and operations. Agent execution is still future work.
