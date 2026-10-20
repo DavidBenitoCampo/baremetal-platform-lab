@@ -35,7 +35,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: prometheus
-          image: ghcr.io/prometheus/prometheus:v3.15.0-distroless
+          image: ghcr.io/prometheus/prometheus:v3.15.0-distroless@sha256:beada036928d627c486ea5a118f0ceae4c23d42a7d714b9f446608a34fa9b137
           imagePullPolicy: IfNotPresent
           args:
             - --config.file=/etc/prometheus/prometheus.yml
