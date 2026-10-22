@@ -74,6 +74,17 @@ jobs:
           kubectl kustomize kubernetes/ai/ollama > "$RUNNER_TEMP/manifests/ollama.yaml"
           kubectl kustomize kubernetes/ai/inference-probe > "$RUNNER_TEMP/manifests/inference-probe.yaml"
           kubectl kustomize monitoring/prometheus > "$RUNNER_TEMP/manifests/monitoring.yaml"
+          kubectl kustomize clusters/pi/flux-system > "$RUNNER_TEMP/manifests/flux.yaml"
+
+      - name: Require image digests
+        run: |
+          python ci/check_image_digests.py \
+            "$RUNNER_TEMP/manifests/podinfo.yaml" \
+            "$RUNNER_TEMP/manifests/ollama.yaml" \
+            "$RUNNER_TEMP/manifests/inference-probe.yaml" \
+            "$RUNNER_TEMP/manifests/monitoring.yaml" \
+            "$RUNNER_TEMP/manifests/flux.yaml" \
+            ci/inference-network-denied-job.yaml
 
       - name: Validate Flux resources
         run: python ci/validate_flux.py
