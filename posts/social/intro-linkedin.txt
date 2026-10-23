@@ -1,11 +1,21 @@
-I've spent the past few years working with Linux systems and infrastructure. Recently, I started building a small platform at home to explore the engineering behind reliable services.
+I'm building a Kubernetes platform on a Raspberry Pi 5 to explore GitOps, observability, and what happens when infrastructure fails.
 
-The hardware is a Raspberry Pi 5 with an SSD. The software has grown into a single-node Kubernetes homelab with K3s, Flux, Ansible, Prometheus, Grafana, and Ollama.
+I've spent the past few years working with Linux systems, networks, and infrastructure. I wanted to take some of that experience further by building and operating my own environment.
 
-I'm interested in the operational questions: What happens when a rollout fails? How do I spot the failure? Does a healthy Deployment mean the service was available? What evidence do I have after recovery?
+What started as a Raspberry Pi running Ubuntu has grown into a small Kubernetes homelab.
 
-I'll share the experiments, mistakes, measurements, and trade-offs as I work through them. Not every test ends with a clean result, and that's part of the point.
+My current setup includes K3s, Flux, Ansible, Prometheus, Grafana, GitHub Actions, and Ollama for local AI inference.
 
-If you work with Linux, DevOps, SRE, or platform engineering, I'd enjoy comparing approaches.
+But the interesting part for me isn't getting everything running.
+
+It's understanding what happens when something breaks.
+
+What happens when a Kubernetes deployment fails? How does Flux respond? What do the metrics tell me? How do I know whether a service stayed available during recovery?
+
+I'm using this project to explore those questions, test different approaches, and document the results, including the things that don't go as planned.
+
+I'll be sharing what I build, the problems I investigate, and the engineering decisions behind them.
+
+If you're working with Linux, DevOps, SRE, or Platform Engineering, I'd love to exchange ideas.
 
 Repository: https://github.com/DavidBenitoCampo/baremetal-platform-lab
