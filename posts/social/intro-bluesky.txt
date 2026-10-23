@@ -1,0 +1,5 @@
+I've started documenting my Raspberry Pi 5 Kubernetes homelab: K3s, Flux, Ansible, Prometheus, Grafana and Ollama.
+
+I'll share failures, recovery tests and what the evidence shows, including what I still need to measure.
+
+https://github.com/DavidBenitoCampo/baremetal-platform-lab
