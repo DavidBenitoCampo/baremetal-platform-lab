@@ -1,0 +1,11 @@
+I've spent the past few years working with Linux systems and infrastructure. Recently, I started building a small platform at home to explore the engineering behind reliable services.
+
+The hardware is a Raspberry Pi 5 with an SSD. The software has grown into a single-node Kubernetes homelab with K3s, Flux, Ansible, Prometheus, Grafana, and Ollama.
+
+I'm interested in the operational questions: What happens when a rollout fails? How do I spot the failure? Does a healthy Deployment mean the service was available? What evidence do I have after recovery?
+
+I'll share the experiments, mistakes, measurements, and trade-offs as I work through them. Not every test ends with a clean result, and that's part of the point.
+
+If you work with Linux, DevOps, SRE, or platform engineering, I'd enjoy comparing approaches.
+
+Repository: https://github.com/DavidBenitoCampo/baremetal-platform-lab
