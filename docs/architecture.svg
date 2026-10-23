@@ -1,233 +1,72 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1720" height="1730" viewBox="0 0 1720 1730" role="img" aria-labelledby="title description">
-  <title id="title">baremetal-platform-lab: current baseline and planned AI platform architecture</title>
-  <desc id="description">Architecture as of 7 October 2026. Solid teal outlines and RUNNING labels identify verified components. A workstation uses Ansible over SSH and kubectl against a single-node K3s server. LAN HTTP traffic passes through Traefik, a ClusterIP Service and two Podinfo replicas. The Raspberry Pi boots from a USB-connected ADATA SU650 SSD and uses a SQLite datastore. Dashed amber outlines and PLANNED labels identify additions: GitHub CI, one GitOps controller, private Ollama inference with a small CPU model and an SSD-backed local-path model cache, Prometheus, a Blackbox exporter, Grafana, Alertmanager and independent off-Pi backups. The GitOps controller pulls reviewed manifests from Git and reconciles them through the Kubernetes API. Ollama is reached using kubectl port-forward through the API, not through Ingress. Prometheus scrapes Podinfo and the Blackbox exporter. Blackbox probes the Ingress, Grafana queries Prometheus and Prometheus sends alerts to Alertmanager. Backup and restore cover K3s control-plane state, server token and configuration. All workloads and local monitoring share one physical failure domain. Multiple application Pods are not host-level high availability.</desc>
-  <defs>
-    <style>
-      text { font-family: 'DejaVu Sans', Arial, sans-serif; fill: #172c3d; }
-      .title { font-size: 42px; font-weight: 700; letter-spacing: -1px; }
-      .subtitle { font-size: 21px; fill: #526477; }
-      .eyebrow { font-size: 15px; font-weight: 700; letter-spacing: 1.3px; fill: #607185; }
-      .section { font-size: 20px; font-weight: 700; }
-      .node-title { font-size: 23px; font-weight: 700; }
-      .body { font-size: 17px; fill: #435568; }
-      .small { font-size: 16px; fill: #526477; }
-      .current-node { fill: #ffffff; stroke: #277d71; stroke-width: 2.5; }
-      .planned-node { fill: #fffcf6; stroke: #ad7422; stroke-width: 2.3; stroke-dasharray: 8 6; }
-      .current-pill { fill: #e4f3ed; }
-      .planned-pill { fill: #fff0d5; }
-      .current-status { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; fill: #20695d; }
-      .planned-status { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; fill: #805312; }
-      .current-path { fill: none; stroke: #277d71; stroke-width: 2.8; stroke-linejoin: round; marker-end: url(#current-arrow); }
-      .planned-path { fill: none; stroke: #ad7422; stroke-width: 2.5; stroke-dasharray: 7 6; stroke-linejoin: round; marker-end: url(#planned-arrow); }
-      .current-label { font-size: 15px; font-weight: 500; fill: #20695d; }
-      .planned-label { font-size: 15px; font-weight: 500; fill: #805312; }
-    </style>
-    <marker id="current-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#277d71"/>
-    </marker>
-    <marker id="planned-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#ad7422"/>
-    </marker>
-  </defs>
-
-  <rect width="1720" height="1730" fill="#ffffff"/>
-  <text x="64" y="76" class="title">baremetal-platform-lab</text>
-  <text x="64" y="113" class="subtitle">Target architecture · working baseline verified on 7 October 2026</text>
-
-  <rect x="64" y="142" width="27" height="21" rx="5" class="current-node"/>
-  <text x="104" y="159" class="small">Solid outline: running and checked</text>
-  <rect x="518" y="142" width="27" height="21" rx="5" class="planned-node"/>
-  <text x="558" y="159" class="small">Dashed outline: planned, not deployed</text>
-
-  <!-- Off-host services are deliberately outside the Pi boundary. -->
-  <text x="478" y="188" class="eyebrow">OFF-HOST · INDEPENDENT STORAGE</text>
-  <rect x="478" y="208" width="440" height="128" rx="14" class="planned-node"/>
-  <rect x="498" y="224" width="88" height="21" rx="5" class="planned-pill"/>
-  <text x="510" y="239" class="planned-status">PLANNED</text>
-  <text x="498" y="270" class="node-title">Independent backup disk</text>
-  <text x="498" y="297" class="body">Encrypted copy · existing computer storage</text>
-  <text x="498" y="321" class="body">K3s state + server token + configuration</text>
-
-  <text x="1044" y="188" class="eyebrow">OFF-HOST · SOURCE CONTROL</text>
-  <rect x="1044" y="208" width="550" height="128" rx="14" class="planned-node"/>
-  <rect x="1064" y="224" width="88" height="21" rx="5" class="planned-pill"/>
-  <text x="1076" y="239" class="planned-status">PLANNED</text>
-  <text x="1064" y="270" class="node-title">GitHub repository + CI</text>
-  <text x="1064" y="297" class="body">Validate manifests and Ansible before merge</text>
-  <text x="1064" y="321" class="body">CI holds no cluster credentials</text>
-
-  <!-- One boundary represents one physical failure domain. -->
-  <rect x="416" y="364" width="1250" height="1170" rx="22" fill="#f4f7fa" stroke="#899aaa" stroke-width="2"/>
-  <text x="446" y="404" class="eyebrow">ONE PHYSICAL NODE</text>
-  <text x="446" y="433" class="body">Pi 5 · 8 GB · USB SSD</text>
-
-  <rect x="64" y="432" width="286" height="704" rx="18" fill="#f7f9fc" stroke="#bbc7d3" stroke-width="1.6"/>
-  <text x="88" y="470" class="node-title">Workstation</text>
-  <text x="88" y="495" class="small">SSH key + local kubeconfig</text>
-
-  <rect x="88" y="516" width="238" height="112" rx="12" class="current-node"/>
-  <text x="106" y="539" class="current-status">IN USE</text>
-  <text x="106" y="565" class="section">Administration</text>
-  <text x="106" y="591" class="body">Ansible host setup</text>
-  <text x="106" y="615" class="body">kubectl apply / checks</text>
-
-  <rect x="88" y="712" width="238" height="112" rx="12" class="current-node"/>
-  <text x="106" y="735" class="current-status">IN USE</text>
-  <text x="106" y="761" class="section">HTTP checks</text>
-  <text x="106" y="787" class="body">curl from the LAN</text>
-  <text x="106" y="811" class="body">podinfo.lab.test</text>
-
-  <rect x="88" y="966" width="238" height="122" rx="12" class="planned-node"/>
-  <text x="106" y="989" class="planned-status">PLANNED</text>
-  <text x="106" y="1015" class="section">Inference client</text>
-  <text x="106" y="1041" class="body">Local HTTP requests</text>
-  <text x="106" y="1065" class="body">Private port-forward</text>
-
-  <!-- Control and delivery paths. -->
-  <rect x="478" y="470" width="440" height="132" rx="14" class="current-node"/>
-  <rect x="498" y="486" width="88" height="21" rx="5" class="current-pill"/>
-  <text x="510" y="501" class="current-status">RUNNING</text>
-  <text x="498" y="535" class="node-title">K3s control plane</text>
-  <text x="498" y="562" class="body">One server on Ubuntu ARM64 · SQLite</text>
-  <text x="498" y="586" class="body">Secrets encryption · manual apply today</text>
-
-  <rect x="1044" y="470" width="550" height="132" rx="14" class="planned-node"/>
-  <rect x="1064" y="486" width="88" height="21" rx="5" class="planned-pill"/>
-  <text x="1076" y="501" class="planned-status">PLANNED</text>
-  <text x="1064" y="535" class="node-title">One GitOps controller</text>
-  <text x="1064" y="562" class="body">Flux or Argo CD · selection pending</text>
-  <text x="1064" y="586" class="body">Reconciles application manifests through the API</text>
-
-  <path d="M 326 573 H 478" class="current-path"/>
-  <text x="402" y="556" text-anchor="middle" class="current-label">SSH / API</text>
-  <path d="M 698 470 V 336" class="planned-path" marker-start="url(#planned-arrow)"/>
-  <text x="724" y="352" class="planned-label">backup / restore</text>
-  <path d="M 1319 336 V 470" class="planned-path"/>
-  <text x="1340" y="391" class="planned-label">pull reviewed main</text>
-  <path d="M 1044 548 H 918" class="planned-path"/>
-  <text x="981" y="530" text-anchor="middle" class="planned-label">reconcile</text>
-
-  <!-- Current application traffic. -->
-  <text x="478" y="658" class="section">01 · Web service baseline</text>
-
-  <rect x="478" y="688" width="270" height="160" rx="14" class="current-node"/>
-  <rect x="498" y="704" width="88" height="21" rx="5" class="current-pill"/>
-  <text x="510" y="719" class="current-status">RUNNING</text>
-  <text x="498" y="750" class="node-title">Traefik Ingress</text>
-  <text x="498" y="781" class="body">podinfo.lab.test</text>
-  <text x="498" y="807" class="body">HTTP 80 · trusted LAN</text>
-
-  <rect x="812" y="688" width="298" height="160" rx="14" class="current-node"/>
-  <rect x="832" y="704" width="88" height="21" rx="5" class="current-pill"/>
-  <text x="844" y="719" class="current-status">RUNNING</text>
-  <text x="832" y="750" class="node-title">Podinfo Service</text>
-  <text x="832" y="781" class="body">ClusterIP · port 9898</text>
-  <text x="832" y="807" class="body">Routes to Ready endpoints</text>
-
-  <rect x="1174" y="688" width="420" height="160" rx="14" class="current-node"/>
-  <rect x="1194" y="704" width="88" height="21" rx="5" class="current-pill"/>
-  <text x="1206" y="719" class="current-status">RUNNING</text>
-  <text x="1194" y="750" class="node-title">Podinfo · two replicas</text>
-  <text x="1194" y="781" class="body">v6.15.0 · probes + resource settings</text>
-  <text x="1194" y="807" class="body">Rollout: 0 unavailable / 1 surge</text>
-  <text x="1194" y="831" class="small">Both Pods run on pi-lab</text>
-
-  <path d="M 326 784 H 478" class="current-path"/>
-  <text x="402" y="766" text-anchor="middle" class="current-label">LAN HTTP</text>
-  <path d="M 748 776 H 812" class="current-path"/>
-  <text x="780" y="758" text-anchor="middle" class="current-label">HTTP</text>
-  <path d="M 1110 776 H 1174" class="current-path"/>
-  <text x="1142" y="740" text-anchor="middle" class="current-label">Ready</text>
-  <text x="1142" y="758" text-anchor="middle" class="current-label">Pods</text>
-
-  <!-- Planned inference is deliberately not connected to public Ingress. -->
-  <text x="478" y="909" class="section">02 · Private inference service</text>
-
-  <rect x="478" y="940" width="270" height="160" rx="14" class="planned-node"/>
-  <rect x="498" y="956" width="88" height="21" rx="5" class="planned-pill"/>
-  <text x="510" y="971" class="planned-status">PLANNED</text>
-  <text x="498" y="1002" class="node-title">Ollama Service</text>
-  <text x="498" y="1033" class="body">ClusterIP · port 11434</text>
-  <text x="498" y="1059" class="body">No Ingress exposure</text>
-
-  <rect x="812" y="940" width="298" height="160" rx="14" class="planned-node"/>
-  <rect x="832" y="956" width="88" height="21" rx="5" class="planned-pill"/>
-  <text x="844" y="971" class="planned-status">PLANNED</text>
-  <text x="832" y="1002" class="node-title">Ollama · one Pod</text>
-  <text x="832" y="1033" class="body">CPU · Qwen2.5 0.5B</text>
-  <text x="832" y="1059" class="body">One request at a time</text>
-  <text x="832" y="1083" class="small">Performance not measured yet</text>
-
-  <rect x="1174" y="940" width="420" height="160" rx="14" class="planned-node"/>
-  <rect x="1194" y="956" width="88" height="21" rx="5" class="planned-pill"/>
-  <text x="1206" y="971" class="planned-status">PLANNED</text>
-  <text x="1194" y="1002" class="node-title">Model cache · local-path PVC</text>
-  <text x="1194" y="1033" class="body">Stored on the ADATA SU650 SSD</text>
-  <text x="1194" y="1059" class="body">Model weights are re-downloadable</text>
-  <text x="1194" y="1083" class="small">Persistence, not replicated storage</text>
-
-  <path d="M 326 1039 H 478" class="planned-path"/>
-  <text x="402" y="1005" text-anchor="middle" class="planned-label">port-forward</text>
-  <text x="402" y="1023" text-anchor="middle" class="planned-label">via K3s API</text>
-  <path d="M 748 1028 H 812" class="planned-path"/>
-  <text x="780" y="1010" text-anchor="middle" class="planned-label">HTTP</text>
-  <path d="M 1110 1028 H 1174" class="planned-path"/>
-  <text x="1142" y="1010" text-anchor="middle" class="planned-label">mount</text>
-
-  <rect x="478" y="1130" width="1116" height="52" rx="10" fill="#e8eef4"/>
-  <text x="498" y="1162" class="body">Shared USB SSD: OS + SQLite now. Model PVC planned. No redundant copy on this node.</text>
-
-  <!-- Planned monitoring uses the application Ingress and metrics endpoint. -->
-  <text x="478" y="1233" class="section">03 · Observability</text>
-
-  <rect x="478" y="1270" width="270" height="144" rx="14" class="planned-node"/>
-  <rect x="498" y="1286" width="88" height="21" rx="5" class="planned-pill"/>
-  <text x="510" y="1301" class="planned-status">PLANNED</text>
-  <text x="498" y="1332" class="node-title" style="font-size:21px">Blackbox exporter</text>
-  <text x="498" y="1363" class="body">HTTP checks via Ingress</text>
-  <text x="498" y="1389" class="body">Reports probe success</text>
-
-  <rect x="812" y="1270" width="298" height="144" rx="14" class="planned-node"/>
-  <rect x="832" y="1286" width="88" height="21" rx="5" class="planned-pill"/>
-  <text x="844" y="1301" class="planned-status">PLANNED</text>
-  <text x="832" y="1332" class="node-title">Prometheus</text>
-  <text x="832" y="1363" class="body">App metrics + HTTP probes</text>
-  <text x="832" y="1389" class="body">Short retention on the SSD</text>
-
-  <rect x="1174" y="1217" width="420" height="94" rx="14" class="planned-node"/>
-  <text x="1194" y="1257" class="node-title">Grafana</text>
-  <rect x="1485" y="1233" width="88" height="21" rx="5" class="planned-pill"/>
-  <text x="1497" y="1248" class="planned-status">PLANNED</text>
-  <text x="1194" y="1287" class="body">Dashboards · access through port-forward</text>
-
-  <rect x="1174" y="1330" width="420" height="94" rx="14" class="planned-node"/>
-  <text x="1194" y="1370" class="node-title">Alertmanager</text>
-  <rect x="1485" y="1346" width="88" height="21" rx="5" class="planned-pill"/>
-  <text x="1497" y="1361" class="planned-status">PLANNED</text>
-  <text x="1194" y="1400" class="body">Routes alerts · notification test pending</text>
-
-  <path d="M 478 1352 H 446 V 1053" class="planned-path" style="marker-end:none"/>
-  <path d="M 446 1025 V 820 H 478" class="planned-path"/>
-  <text x="435" y="1220" class="planned-label" transform="rotate(-90 435 1220)">HTTP probe</text>
-  <path d="M 812 1352 H 748" class="planned-path"/>
-  <text x="780" y="1334" text-anchor="middle" class="planned-label">scrape</text>
-  <path d="M 1174 1264 H 1142 V 1308 H 1110" class="planned-path"/>
-  <text x="1142" y="1250" text-anchor="middle" class="planned-label">query</text>
-  <path d="M 1110 1376 H 1174" class="planned-path"/>
-  <text x="1142" y="1360" text-anchor="middle" class="planned-label">alerts</text>
-  <path d="M 961 1414 V 1460 H 1632 V 800 H 1594" class="planned-path"/>
-  <text x="1270" y="1446" text-anchor="middle" class="planned-label">scrape Podinfo /metrics</text>
-
-  <text x="478" y="1501" class="body" style="font-weight:700">A Pi or SSD failure stops the application, control plane and all local monitoring.</text>
-
-  <text x="64" y="1588" class="section">Recovery scope</text>
-  <text x="64" y="1620" class="body">First restore: K3s control-plane state, server token and configuration.</text>
-  <text x="64" y="1647" class="body">Application data and monitoring history are outside the first backup test.</text>
-  <text x="64" y="1674" class="body">Model weights are a cache. Re-download them after storage loss.</text>
-
-  <text x="1044" y="1588" class="section">AI work comes next</text>
-  <text x="1044" y="1620" class="body">Start with inference, resource limits and recovery tests.</text>
-  <text x="1044" y="1647" class="body">Add a read-only agent afterwards, with bounded access.</text>
-  <text x="1044" y="1674" class="body">Two Pods on one Pi are not host-level high availability.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1510" viewBox="0 0 1440 1510" role="img" aria-labelledby="title desc">
+<title id="title">Baremetal platform lab architecture</title>
+<desc id="desc">Repository architecture reviewed 23 October 2026. GitHub CI gates main and Flux reconciles five configurations on one Pi. Private Ollama inference, Podinfo, Prometheus and Grafana share SSD storage. A workstation holds encrypted K3s backups. External monitoring, notifications and a read-only assistant remain planned.</desc>
+<defs><style>text{font-family:DejaVu Sans,sans-serif;fill:#183044}.title{font-size:34px;font-weight:bold}.head{font-size:21px;font-weight:bold}.body{font-size:16px}.small{font-size:14px;fill:#4a6173}.box{fill:white;stroke:#277d71;stroke-width:2}.future{fill:#fffcf6;stroke:#ad7422;stroke-width:2;stroke-dasharray:7 5}.line{fill:none;stroke:#277d71;stroke-width:2;marker-end:url(#arrow)}</style><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#277d71"/></marker></defs>
+<rect width="1440" height="1510" fill="#fff"/>
+<text x="50" y="65" class="title">baremetal-platform-lab</text>
+<text x="50" y="100" class="body">Repository reviewed 23 October 2026. Runtime results are operator-reported.</text>
+<rect x="50" y="135" width="650" height="155" rx="12" class="box"/>
+<text x="70" y="169" class="head">GitHub repository and CI</text>
+<text x="70" y="200" class="body">PR required; validate must pass; branch up to date</text>
+<text x="70" y="226" class="body">Flux schemas and rendered image digests checked</text>
+<text x="70" y="252" class="body">No cluster credentials in CI</text>
+<rect x="740" y="135" width="650" height="155" rx="12" class="box"/>
+<text x="760" y="169" class="head">Workstation and independent backup disk</text>
+<text x="760" y="200" class="body">Tailscale + SSH key; API and Podinfo managed tunnels</text>
+<text x="760" y="226" class="body">Ollama, Prometheus, Grafana via private port-forwards</text>
+<text x="760" y="252" class="body">Encrypted K3s state archive; one backup destination</text>
+<rect x="50" y="350" width="1340" height="830" rx="18" fill="#f1f6f8" stroke="#8d9eac" stroke-width="2"/>
+<text x="75" y="390" class="head">ONE PI · Ubuntu ARM64 · Pi 5 / 8 GB · USB SATA SSD</text>
+<rect x="80" y="425" width="600" height="145" rx="12" class="box"/>
+<text x="100" y="459" class="head">Flux 2.9.6</text>
+<text x="100" y="490" class="body">Four controllers, pinned through Kustomize images</text>
+<text x="100" y="516" class="body">Five Kustomizations follow main</text>
+<text x="100" y="542" class="body">flux-system, podinfo, ollama, probe, monitoring</text>
+<rect x="740" y="425" width="620" height="145" rx="12" class="box"/>
+<text x="760" y="459" class="head">K3s v1.36.5+k3s1</text>
+<text x="760" y="490" class="body">Single server; SQLite; Secrets encryption</text>
+<text x="760" y="516" class="body">Traefik + local-path provisioner</text>
+<text x="760" y="542" class="body">Control plane and workloads share one host</text>
+<path d="M375 290 V325 H715 V410 H375 V425" class="line"/>
+<text x="390" y="325" class="small">Flux pulls main</text>
+<path d="M680 495 H740" class="line"/>
+<rect x="80" y="610" width="395" height="195" rx="12" class="box"/>
+<text x="100" y="644" class="head">platform-demo</text>
+<text x="100" y="675" class="body">Traefik → Service → Podinfo</text>
+<text x="100" y="701" class="body">Podinfo 6.15.0; two replicas</text>
+<text x="100" y="727" class="body">Readiness + rolling updates</text>
+<text x="100" y="753" class="body">Both replicas share this Pi</text>
+<rect x="505" y="610" width="420" height="195" rx="12" class="box"/>
+<text x="525" y="644" class="head">ai-lab</text>
+<text x="525" y="675" class="body">Ollama 0.40.0; qwen2.5:0.5b</text>
+<text x="525" y="701" class="body">CPU inference; one parallel request</text>
+<text x="525" y="727" class="body">Probe runs once per minute</text>
+<text x="525" y="753" class="body">NetworkPolicy restricts clients</text>
+<rect x="955" y="610" width="405" height="195" rx="12" class="box"/>
+<text x="975" y="644" class="head">monitoring</text>
+<text x="975" y="675" class="body">Prometheus 3.15.0</text>
+<text x="975" y="701" class="body">kube-state-metrics 2.20.0</text>
+<text x="975" y="727" class="body">Grafana 13.2.2</text>
+<text x="975" y="753" class="body">Alert rules and dashboards in Git</text>
+<text x="95" y="850" class="head">Traffic and observation paths</text>
+<text x="95" y="885" class="body">Workstation → Tailscale / SSH → Kubernetes API or Traefik; no public Ollama Ingress</text>
+<text x="95" y="920" class="body">Inference probe → Ollama; Prometheus → probe metrics and kube-state-metrics</text>
+<text x="95" y="955" class="body">Grafana → Prometheus; alert firing observed locally, notification delivery pending</text>
+<rect x="80" y="995" width="1280" height="150" rx="12" class="box"/>
+<text x="100" y="1029" class="head">One SSD: operating system, SQLite, and local-path volumes</text>
+<text x="100" y="1060" class="body">Ollama model cache: 20 GiB; Prometheus: 5 GiB; Grafana: 2 GiB requested</text>
+<text x="100" y="1086" class="body">Local-path PVC sizes do not enforce filesystem quotas. No replicated storage.</text>
+<text x="100" y="1112" class="body">Backup covers K3s state and credentials. Application volumes and OS are outside the tested restore.</text>
+<rect x="50" y="1220" width="650" height="155" rx="12" class="future"/>
+<text x="70" y="1254" class="head">Planned</text>
+<text x="70" y="1285" class="body">Independent availability checks and host metrics</text>
+<text x="70" y="1311" class="body">Alertmanager and notification delivery</text>
+<text x="70" y="1337" class="body">Read-only assistant with scoped identity</text>
+<rect x="740" y="1220" width="650" height="155" rx="12" class="future"/>
+<text x="760" y="1254" class="head">Remaining verification</text>
+<text x="760" y="1285" class="body">Six HTTP timeouts remain unexplained</text>
+<text x="760" y="1311" class="body">Successful version rollout with continuous HTTP</text>
+<text x="760" y="1337" class="body">VPN reboot / denial and wider policy tests</text>
+<text x="50" y="1425" class="head">A Pi, power, or SSD failure affects every workload and local monitoring.</text>
+<text x="50" y="1460" class="small">Solid boxes: implemented. Dashed boxes: future work. Two replicas provide no host-level high availability.</text>
 </svg>

@@ -33,6 +33,8 @@ All persistent volumes use `local-path` storage on the same SSD:
 
 A spare 512 GB microSD card is available, but the running cluster does not use the card. The lab has no dedicated inference GPU. There is no agent deployed yet.
 
+Architecture: [SVG](docs/architecture.svg) · [PNG](docs/architecture.png).
+
 ## What I've tested
 
 ### Host setup and releases
@@ -105,14 +107,18 @@ I added an unsupported `replicaz` field to the Podinfo Deployment on a test bran
 
 The [workflow](.github/workflows/validate.yml) now checks:
 
-- YAML and Ansible syntax.
+- YAML across application, monitoring, and Flux configuration, plus Ansible syntax.
 - Kustomize rendering and strict Kubernetes schemas for Podinfo, Ollama, the inference probe, and monitoring.
+- Flux custom resources against the CRD schemas committed with the bootstrap, including unknown-field rejection checks.
+- SHA256 digest syntax for 11 container references in rendered workloads and Flux controllers, plus the denial-test Job.
 - Prometheus configuration and referenced alert rules with `promtool`.
 - Python and shell syntax.
 - Local HTTP tests for the scheduled inference probe and alert-state fixtures.
 - JSONL evidence files.
 
-CI runs without Pi credentials or a connection to the cluster. Flux custom-resource schema validation still needs adding.
+CI runs without Pi credentials or a connection to the cluster. The digest check rejects tag-only references, malformed digests, and input files with no containers. It checks reference syntax; registry availability, platform support, signatures, and vulnerabilities need separate checks.
+
+[Flux schema validator](ci/validate_flux.py) · [Image digest checker](ci/check_image_digests.py) · [Pinning and verification record](docs/evidence/2026-10-23-image-pinning.md)
 
 ### Monitoring and an outage alert
 
@@ -229,11 +235,14 @@ Ansible prepares the host. Kustomize builds the manifests. Flux fetches the repo
 | `flux-system` | `clusters/pi` |
 | `podinfo` | `kubernetes/overlays/pi` |
 | `ollama` | `kubernetes/ai/ollama` |
+| `ollama-inference-probe` | `kubernetes/ai/inference-probe` |
 | `monitoring` | `monitoring/prometheus` |
 
 For normal changes, I work on a branch, review CI, and merge into `main`. Flux then reconciles the cluster. Manual changes are temporary when Flux manages the same fields.
 
-CI and Flux run independently. A failing Actions run does not stop Flux from applying a commit already on `main`. Required checks and branch protection need verification.
+The active [main-protection ruleset](https://github.com/DavidBenitoCampo/baremetal-platform-lab/rules/25429356) requires a pull request, the `validate` check from GitHub Actions, an up-to-date branch, and resolved review conversations. Required approvals are zero for this solo repository. Force pushes and branch deletion are blocked, with no configured bypass actors. These settings were read from GitHub on 23 October 2026.
+
+CI and Flux run independently. The ruleset gates changes before merge; Flux reconciles commits after they reach `main`.
 
 Monitoring ConfigMaps use content-based name suffixes. A configuration change updates the Deployment's ConfigMap reference and triggers a rollout. This fixed the earlier problem of Prometheus continuing to use its old configuration.
 
@@ -337,8 +346,7 @@ Pod resolved DNS and received a connection refusal. The denied Job reached
 `Complete`. This exercise covers these clients and Ollama's Service port
 11434. Other NetworkPolicy paths and VPN denial checks still need evidence.
 
-Runtime images use version tags. Immutable image digest pinning and narrower
-Flux reconciliation identities are future work.
+The six application and monitoring Deployments, four Flux controllers, and denial-test Job use version tags with SHA256 image index digests. The indexes were inspected for Linux ARM64 support. Flux controller pins use the `images` transformer in `clusters/pi/flux-system/kustomization.yaml`; the generated controller manifest keeps its upstream tags. CI checks the rendered output. Narrower Flux reconciliation identities remain future work.
 
 ## Storage and reliability limits
 
@@ -364,7 +372,7 @@ A production deployment would need separate failure domains, independent monitor
 - `scripts/`: preflight, HTTP checks, inference measurements, and K3s backup, verification, and restore helpers.
 - `workstation/systemd/`: the workstation managed SSH tunnel service.
 - `docs/`: evidence, runbooks, decisions, and incident templates.
-- `versions.yaml`: version notes, including proposed components. The deployed manifests show the running choices.
+- `versions.yaml`: repository version and digest inventory, operator-reported runtime checks, and undeployed components.
 
 For a fresh build, start with the [bootstrap runbook](docs/runbooks/bootstrap.md), [Ollama guide](kubernetes/ai/ollama/README.md), and [Flux runbook](docs/runbooks/flux.md).
 
@@ -374,7 +382,8 @@ I'm keeping each step small enough for the existing hardware and a four-hour wee
 
 1. Save Flux request acknowledgements after restore, add a second independent backup destination, and improve restore precondition error messages.
 2. Investigate the six HTTP timeouts after Deployment recovery and measure a successful version update with continuous HTTP requests.
-3. Extend VPN and NetworkPolicy restriction checks, add Flux schema validation, and pin runtime image digests.
+3. Extend VPN and NetworkPolicy restriction checks and narrow Flux reconciliation identities.
+4. Add independent host monitoring and alert notification delivery, then improve backup scheduling and coverage.
 
 After these checks, I'd like to add a small read-only assistant with one approved status-reading tool and a scoped identity. The current project covers model serving and operations. Agent execution is still future work.
 
@@ -389,3 +398,4 @@ After these checks, I'd like to add a small read-only assistant with one approve
 - [Ollama API timings](https://docs.ollama.com/api/usage).
 - [K3s backup and restore](https://docs.k3s.io/datastore/backup-restore).
 - [Tailscale grants syntax](https://tailscale.com/docs/reference/syntax/grants).
+
