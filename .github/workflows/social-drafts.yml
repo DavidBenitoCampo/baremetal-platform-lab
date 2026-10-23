@@ -1,0 +1,47 @@
+name: Social drafts
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: Social channel to preview or draft
+        type: choice
+        options:
+          - linkedin
+          - bluesky
+          - both
+        default: linkedin
+        required: true
+      action:
+        description: Preview only or create drafts in Buffer
+        type: choice
+        options:
+          - preview
+          - create-draft
+        default: preview
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  social-draft:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out content
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Validate and preview introduction
+        env:
+          SELECTED_CHANNEL: ${{ inputs.channel }}
+        run: python3 scripts/buffer_drafts.py --channel "$SELECTED_CHANNEL"
+
+      - name: Create Buffer drafts for manual review
+        if: inputs.action == 'create-draft'
+        env:
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          SELECTED_CHANNEL: ${{ inputs.channel }}
+        run: python3 scripts/buffer_drafts.py --channel "$SELECTED_CHANNEL" --create-draft
