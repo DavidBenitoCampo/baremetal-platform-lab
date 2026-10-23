@@ -48,7 +48,7 @@ pi-flux get kustomizations -A
 ```
 
 Compare the Git source revision with the current GitHub `main` commit.
-The four Kustomizations should report the same revision, Ready True, and
+The five Kustomizations should report the same revision, Ready True, and
 Suspended False. Workload Kustomizations reconcile on their own intervals.
 
 ## Check Flux through SSH
@@ -64,7 +64,7 @@ ssh -i "$HOME/.ssh/pi_lab_ed25519" lab@100.90.135.106 '
 set -e
 restore_flux_request="$(date -u +%s%N)"
 
-for resource in gitrepository/flux-system kustomization/flux-system kustomization/monitoring kustomization/ollama kustomization/podinfo; do
+for resource in gitrepository/flux-system kustomization/flux-system kustomization/monitoring kustomization/ollama kustomization/ollama-inference-probe kustomization/podinfo; do
   sudo -n k3s kubectl annotate "$resource" -n flux-system --overwrite "reconcile.fluxcd.io/requestedAt=$restore_flux_request"
   sudo -n k3s kubectl wait "$resource" -n flux-system --for="jsonpath={.status.lastHandledReconcileAt}=$restore_flux_request" --timeout=180s
   sudo -n k3s kubectl wait "$resource" -n flux-system --for=condition=Ready --timeout=180s
@@ -75,7 +75,7 @@ sudo -n k3s kubectl get gitrepository,kustomizations -n flux-system
 ' | tee docs/evidence/flux-after-live-restore.txt
 ```
 
-Every `HANDLED` value should equal its `REQUESTED` value. The source and all four Kustomizations should report Ready. Save this output to prove the controllers processed the new request. A Ready value alone also appears in restored status and does not prove a new request was handled.
+Every `HANDLED` value should equal its `REQUESTED` value. The source and all five current Kustomizations should report Ready. Save this output to prove the controllers processed the new request. A Ready value alone also appears in restored status and does not prove a new request was handled.
 
 ## If reconciliation times out after the restore
 
@@ -140,3 +140,4 @@ The displayed Flux source and all four Kustomizations reported Ready at commit `
 - [K3s backup and restore](https://docs.k3s.io/datastore/backup-restore)
 - [K3s service and container behavior](https://docs.k3s.io/upgrades/killall)
 - [Flux troubleshooting](https://fluxcd.io/flux/cheatsheets/troubleshooting/)
+
