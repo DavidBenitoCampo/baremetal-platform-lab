@@ -1,16 +1,48 @@
-verification_date: '2026-10-02'
-status: proposed_pins_runtime_verification_pending
+verification_date: '2026-10-23'
+status: repository_pins_checked_runtime_results_operator_reported
 os: Ubuntu Server 24.04 LTS ARM64
 k3s: v1.36.5+k3s1
 flux: v2.9.6
-podinfo_baseline: '6.14.1'
-podinfo_release: '6.15.0'
-prometheus: v3.13.3
-grafana_oss: '13.2.2'
-alertmanager: v0.34.1
-blackbox_exporter: v0.28.0
-node_exporter: v1.12.1
-image_digests: {}
+podinfo_baseline: 6.14.1
+podinfo_release: 6.15.0
+prometheus: v3.15.0-distroless
+grafana_oss: 13.2.2
+image_digests:
+  kubernetes/base/deployment.yaml: ghcr.io/stefanprodan/podinfo:6.15.0@sha256:ec73780a8425f59ea49f5bc8cdff0d598805a224fbaa1f86c67a244f250fa9da
+  kubernetes/ai/ollama/deployment.yaml: ollama/ollama:0.40.0@sha256:1bef639749741b375e9a1eb2c1346fb57ce52f5432de1f74846e44ccc18e1687
+  kubernetes/ai/inference-probe/deployment.yaml: python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+  monitoring/prometheus/grafana-deployment.yaml: grafana/grafana:13.2.2@sha256:ac461fb352abc50da10a51c7d02462e9c05488f11f53f14b3ad79a8145f638a0
+  monitoring/prometheus/kube-state-metrics.yaml: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.20.0@sha256:42cfe3723a5f058171c627537fb57a3ea0f26e4380fa18555a95cb1a1b4cfc5b
+  monitoring/prometheus/prometheus.yaml: ghcr.io/prometheus/prometheus:v3.15.0-distroless@sha256:beada036928d627c486ea5a118f0ceae4c23d42a7d714b9f446608a34fa9b137
+  ci/inference-network-denied-job.yaml: python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+  ghcr.io/fluxcd/helm-controller: ghcr.io/fluxcd/helm-controller:v1.6.5@sha256:0d52fff5c4d476277b8fcb6beb9041e269adb5db943fe69f5a806ea0c92b1511
+  ghcr.io/fluxcd/kustomize-controller: ghcr.io/fluxcd/kustomize-controller:v1.9.6@sha256:2ebeaa341da77d52b6abbbba5efcee0450d47f8b42f0e6f33b08f9020262d606
+  ghcr.io/fluxcd/notification-controller: ghcr.io/fluxcd/notification-controller:v1.9.4@sha256:840f318265ee26f0d2c48a158bf7896b22aa4e998e320a18646309f0e40b15da
+  ghcr.io/fluxcd/source-controller: ghcr.io/fluxcd/source-controller:v1.9.6@sha256:6a6693172589f8ff26123a231d5fa6ceb194a6efb4dc647cdf057c959f76a2e3
 binary_checksums: {}
 operator_tools: {}
-runtime_checks: {}
+runtime_checks:
+  source: Operator outputs pasted in chat, summarized in docs/evidence/2026-10-23-image-pinning.md
+  podinfo: rollout successful and HTTP 200
+  ollama: rollout successful and qwen2.5:0.5b returned OK.
+  inference_probe: rollout successful; five HTTP 200 checks reported
+  monitoring: three rollouts successful; four up metrics equal 1; Grafana database ok
+  flux: all five Kustomizations Ready at 227b2e70
+  denial_test_job: reference pinned; Job not rerun during pinning
+kube_state_metrics: v2.20.0
+ollama: 0.40.0
+inference_probe_python: 3.12.15-slim-bookworm
+planned_components:
+  alertmanager:
+    status: not_deployed
+    version: not_selected
+  blackbox_exporter:
+    status: not_deployed
+    version: not_selected
+  node_exporter:
+    status: not_deployed
+    version: not_selected
+  read_only_assistant:
+    status: not_deployed
+    version: not_selected
+inventory_scope: Repository-managed workloads and Flux controllers; excludes K3s-packaged system images.
