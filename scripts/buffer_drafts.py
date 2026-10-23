@@ -79,6 +79,8 @@ def main():
             "channelId": chosen[platform],
             "schedulingType": "automatic",
             "mode": "addToQueue",
+            "assets": [],
+            "needsApproval": False,
             "saveToDraft": True,
         }})["createPost"]
         if response.get("message"):
