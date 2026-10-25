@@ -1,0 +1,152 @@
+{
+    "apiVersion": "batch/v1",
+    "kind": "Job",
+    "metadata": {
+        "annotations": {
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"podinfo-rollout-probe\",\"namespace\":\"platform-demo\"},\"spec\":{\"backoffLimit\":0,\"suspend\":true,\"template\":{\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"args\":[\"http://podinfo.platform-demo.svc.cluster.local:9898/readyz\",\"--count\",\"1800\",\"--interval\",\"1\",\"--timeout\",\"0.8\"],\"command\":[\"python\",\"-u\",\"/probe/http_probe.py\"],\"image\":\"python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258\",\"name\":\"probe\",\"resources\":{\"limits\":{\"cpu\":\"100m\",\"memory\":\"64Mi\"},\"requests\":{\"cpu\":\"25m\",\"memory\":\"32Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"readOnlyRootFilesystem\":true},\"volumeMounts\":[{\"mountPath\":\"/probe\",\"name\":\"script\",\"readOnly\":true}]}],\"restartPolicy\":\"Never\",\"securityContext\":{\"runAsGroup\":65532,\"runAsNonRoot\":true,\"runAsUser\":65532,\"seccompProfile\":{\"type\":\"RuntimeDefault\"}},\"volumes\":[{\"configMap\":{\"name\":\"podinfo-rollout-probe\"},\"name\":\"script\"}]}}}}\n"
+        },
+        "creationTimestamp": "2026-10-24T20:15:00Z",
+        "generation": 2,
+        "labels": {
+            "batch.kubernetes.io/controller-uid": "fe1603d8-30fc-4271-bd40-452f1ce1b302",
+            "batch.kubernetes.io/job-name": "podinfo-rollout-probe",
+            "controller-uid": "fe1603d8-30fc-4271-bd40-452f1ce1b302",
+            "job-name": "podinfo-rollout-probe"
+        },
+        "name": "podinfo-rollout-probe",
+        "namespace": "platform-demo",
+        "resourceVersion": "661251",
+        "uid": "fe1603d8-30fc-4271-bd40-452f1ce1b302"
+    },
+    "spec": {
+        "backoffLimit": 0,
+        "completionMode": "NonIndexed",
+        "completions": 1,
+        "manualSelector": false,
+        "parallelism": 1,
+        "podReplacementPolicy": "TerminatingOrFailed",
+        "selector": {
+            "matchLabels": {
+                "batch.kubernetes.io/controller-uid": "fe1603d8-30fc-4271-bd40-452f1ce1b302"
+            }
+        },
+        "suspend": false,
+        "template": {
+            "metadata": {
+                "labels": {
+                    "batch.kubernetes.io/controller-uid": "fe1603d8-30fc-4271-bd40-452f1ce1b302",
+                    "batch.kubernetes.io/job-name": "podinfo-rollout-probe",
+                    "controller-uid": "fe1603d8-30fc-4271-bd40-452f1ce1b302",
+                    "job-name": "podinfo-rollout-probe"
+                }
+            },
+            "spec": {
+                "automountServiceAccountToken": false,
+                "containers": [
+                    {
+                        "args": [
+                            "http://podinfo.platform-demo.svc.cluster.local:9898/readyz",
+                            "--count",
+                            "1800",
+                            "--interval",
+                            "1",
+                            "--timeout",
+                            "0.8"
+                        ],
+                        "command": [
+                            "python",
+                            "-u",
+                            "/probe/http_probe.py"
+                        ],
+                        "image": "python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258",
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "probe",
+                        "resources": {
+                            "limits": {
+                                "cpu": "100m",
+                                "memory": "64Mi"
+                            },
+                            "requests": {
+                                "cpu": "25m",
+                                "memory": "32Mi"
+                            }
+                        },
+                        "securityContext": {
+                            "allowPrivilegeEscalation": false,
+                            "capabilities": {
+                                "drop": [
+                                    "ALL"
+                                ]
+                            },
+                            "readOnlyRootFilesystem": true
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/probe",
+                                "name": "script",
+                                "readOnly": true
+                            }
+                        ]
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "restartPolicy": "Never",
+                "schedulerName": "default-scheduler",
+                "securityContext": {
+                    "runAsGroup": 65532,
+                    "runAsNonRoot": true,
+                    "runAsUser": 65532,
+                    "seccompProfile": {
+                        "type": "RuntimeDefault"
+                    }
+                },
+                "terminationGracePeriodSeconds": 30,
+                "volumes": [
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "podinfo-rollout-probe"
+                        },
+                        "name": "script"
+                    }
+                ]
+            }
+        }
+    },
+    "status": {
+        "completionTime": "2026-10-24T20:53:15Z",
+        "conditions": [
+            {
+                "lastProbeTime": "2026-10-24T20:23:05Z",
+                "lastTransitionTime": "2026-10-24T20:23:05Z",
+                "message": "Job resumed",
+                "reason": "JobResumed",
+                "status": "False",
+                "type": "Suspended"
+            },
+            {
+                "lastProbeTime": "2026-10-24T20:53:15Z",
+                "lastTransitionTime": "2026-10-24T20:53:15Z",
+                "message": "Reached expected number of succeeded pods",
+                "reason": "CompletionsReached",
+                "status": "True",
+                "type": "SuccessCriteriaMet"
+            },
+            {
+                "lastProbeTime": "2026-10-24T20:53:15Z",
+                "lastTransitionTime": "2026-10-24T20:53:15Z",
+                "message": "Reached expected number of succeeded pods",
+                "reason": "CompletionsReached",
+                "status": "True",
+                "type": "Complete"
+            }
+        ],
+        "ready": 0,
+        "startTime": "2026-10-24T20:23:05Z",
+        "succeeded": 1,
+        "terminating": 0,
+        "uncountedTerminatedPods": {}
+    }
+}

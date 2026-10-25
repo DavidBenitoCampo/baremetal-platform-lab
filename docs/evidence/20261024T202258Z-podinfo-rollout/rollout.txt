@@ -1,0 +1,1 @@
+deployment "podinfo" successfully rolled out
