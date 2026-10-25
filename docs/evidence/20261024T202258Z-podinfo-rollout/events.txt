@@ -1,0 +1,40 @@
+LAST SEEN   TYPE      REASON              OBJECT                            MESSAGE
+21m         Normal    SandboxChanged      pod/podinfo-744f84858c-97fvk      Pod sandbox changed, it will be killed and re-created.
+21m         Normal    SandboxChanged      pod/podinfo-744f84858c-ln2x5      Pod sandbox changed, it will be killed and re-created.
+21m         Normal    Pulled              pod/podinfo-744f84858c-97fvk      Container image "ghcr.io/stefanprodan/podinfo:6.15.0@sha256:ec73780a8425f59ea49f5bc8cdff0d598805a224fbaa1f86c67a244f250fa9da" already present on machine and can be accessed by the pod
+21m         Normal    Pulled              pod/podinfo-744f84858c-ln2x5      Container image "ghcr.io/stefanprodan/podinfo:6.15.0@sha256:ec73780a8425f59ea49f5bc8cdff0d598805a224fbaa1f86c67a244f250fa9da" already present on machine and can be accessed by the pod
+21m         Normal    Started             pod/podinfo-744f84858c-ln2x5      Container started
+21m         Normal    Created             pod/podinfo-744f84858c-ln2x5      Container created
+21m         Normal    Started             pod/podinfo-744f84858c-97fvk      Container started
+21m         Normal    Created             pod/podinfo-744f84858c-97fvk      Container created
+16m         Normal    Started             pod/podinfo-probe-preflight       Container started
+16m         Normal    Scheduled           pod/podinfo-probe-preflight       Successfully assigned platform-demo/podinfo-probe-preflight to pi-lab
+16m         Normal    Created             pod/podinfo-probe-preflight       Container created
+16m         Normal    Pulled              pod/podinfo-probe-preflight       Container image "python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258" already present on machine and can be accessed by the pod
+14m         Normal    Suspended           job/podinfo-rollout-probe         Job suspended
+6m30s       Normal    Scheduled           pod/podinfo-rollout-probe-cnfsb   Successfully assigned platform-demo/podinfo-rollout-probe-cnfsb to pi-lab
+6m30s       Normal    SuccessfulCreate    job/podinfo-rollout-probe         Created pod: podinfo-rollout-probe-cnfsb
+6m30s       Normal    Resumed             job/podinfo-rollout-probe         Job resumed
+6m29s       Normal    Started             pod/podinfo-rollout-probe-cnfsb   Container started
+6m29s       Normal    Created             pod/podinfo-rollout-probe-cnfsb   Container created
+6m29s       Normal    Pulled              pod/podinfo-rollout-probe-cnfsb   Container image "python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258" already present on machine and can be accessed by the pod
+117s        Normal    Scheduled           pod/podinfo-586f85fc44-pdzjm      Successfully assigned platform-demo/podinfo-586f85fc44-pdzjm to pi-lab
+117s        Normal    ScalingReplicaSet   deployment/podinfo                Scaled up replica set podinfo-586f85fc44 from 0 to 1
+117s        Normal    SuccessfulCreate    replicaset/podinfo-586f85fc44     Created pod: podinfo-586f85fc44-pdzjm
+116s        Normal    Started             pod/podinfo-586f85fc44-pdzjm      Container started
+116s        Normal    Created             pod/podinfo-586f85fc44-pdzjm      Container created
+116s        Normal    Pulled              pod/podinfo-586f85fc44-pdzjm      Container image "ghcr.io/stefanprodan/podinfo:6.15.0@sha256:ec73780a8425f59ea49f5bc8cdff0d598805a224fbaa1f86c67a244f250fa9da" already present on machine and can be accessed by the pod
+106s        Normal    Scheduled           pod/podinfo-586f85fc44-rdlhv      Successfully assigned platform-demo/podinfo-586f85fc44-rdlhv to pi-lab
+106s        Normal    Started             pod/podinfo-586f85fc44-rdlhv      Container started
+106s        Normal    SuccessfulDelete    replicaset/podinfo-744f84858c     Deleted pod: podinfo-744f84858c-97fvk
+106s        Normal    ScalingReplicaSet   deployment/podinfo                Scaled up replica set podinfo-586f85fc44 from 1 to 2
+106s        Normal    ScalingReplicaSet   deployment/podinfo                Scaled down replica set podinfo-744f84858c from 2 to 1
+106s        Normal    SuccessfulCreate    replicaset/podinfo-586f85fc44     Created pod: podinfo-586f85fc44-rdlhv
+106s        Warning   Unhealthy           pod/podinfo-744f84858c-97fvk      Readiness probe failed: HTTP probe failed with statuscode: 503
+106s        Normal    Killing             pod/podinfo-744f84858c-97fvk      Stopping container podinfo
+106s        Normal    Pulled              pod/podinfo-586f85fc44-rdlhv      Container image "ghcr.io/stefanprodan/podinfo:6.15.0@sha256:ec73780a8425f59ea49f5bc8cdff0d598805a224fbaa1f86c67a244f250fa9da" already present on machine and can be accessed by the pod
+106s        Normal    Created             pod/podinfo-586f85fc44-rdlhv      Container created
+96s         Normal    SuccessfulDelete    replicaset/podinfo-744f84858c     Deleted pod: podinfo-744f84858c-ln2x5
+96s         Normal    Killing             pod/podinfo-744f84858c-ln2x5      Stopping container podinfo
+96s         Normal    ScalingReplicaSet   deployment/podinfo                Scaled down replica set podinfo-744f84858c from 1 to 0
+94s         Warning   Unhealthy           pod/podinfo-744f84858c-ln2x5      Readiness probe failed: HTTP probe failed with statuscode: 503
