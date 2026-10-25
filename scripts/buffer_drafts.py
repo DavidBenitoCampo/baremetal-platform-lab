@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preview or create unscheduled Buffer drafts for the homelab introduction."""
+"""Preview or create review-only Buffer drafts for selected homelab posts."""
 import argparse
 import json
 import os
@@ -11,6 +11,13 @@ ROOT = Path(__file__).resolve().parents[1]
 FILES = {
     "linkedin": ROOT / "posts/social/intro-linkedin.txt",
     "bluesky": ROOT / "posts/social/intro-bluesky.txt",
+}
+TOPICS = {
+    "introduction": FILES,
+    "flux-recovery": {
+        "linkedin": ROOT / "posts/social/flux-recovery-linkedin.txt",
+        "bluesky": ROOT / "posts/social/flux-recovery-bluesky.txt",
+    },
 }
 ORG_QUERY = "query { account { organizations { id name } } }"
 CHANNEL_QUERY = """
@@ -45,11 +52,12 @@ def request(api_key, query, variables=None):
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--topic", choices=list(TOPICS), default="introduction")
     parser.add_argument("--channel", choices=["linkedin", "bluesky", "both"], required=True)
     parser.add_argument("--create-draft", action="store_true")
     args = parser.parse_args()
     selected = list(FILES) if args.channel == "both" else [args.channel]
-    posts = {p: FILES[p].read_text(encoding="utf-8").strip() for p in selected}
+    posts = {p: TOPICS[args.topic][p].read_text(encoding="utf-8").strip() for p in selected}
     for platform, text in posts.items():
         if not text or (platform == "bluesky" and len(text) > 300):
             raise ValueError("Invalid post length for " + platform)

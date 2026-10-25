@@ -3,6 +3,14 @@ name: Social drafts
 on:
   workflow_dispatch:
     inputs:
+      topic:
+        description: Which prepared post to use
+        type: choice
+        options:
+          - introduction
+          - flux-recovery
+        default: flux-recovery
+        required: true
       channel:
         description: Social channel to preview or draft
         type: choice
@@ -10,7 +18,7 @@ on:
           - linkedin
           - bluesky
           - both
-        default: linkedin
+        default: both
         required: true
       action:
         description: Preview only or create drafts in Buffer
@@ -34,14 +42,16 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Validate and preview introduction
+      - name: Validate and preview post
         env:
+          SELECTED_TOPIC: ${{ inputs.topic }}
           SELECTED_CHANNEL: ${{ inputs.channel }}
-        run: python3 scripts/buffer_drafts.py --channel "$SELECTED_CHANNEL"
+        run: python3 scripts/buffer_drafts.py --topic "$SELECTED_TOPIC" --channel "$SELECTED_CHANNEL"
 
       - name: Create Buffer drafts for manual review
         if: inputs.action == 'create-draft'
         env:
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          SELECTED_TOPIC: ${{ inputs.topic }}
           SELECTED_CHANNEL: ${{ inputs.channel }}
-        run: python3 scripts/buffer_drafts.py --channel "$SELECTED_CHANNEL" --create-draft
+        run: python3 scripts/buffer_drafts.py --topic "$SELECTED_TOPIC" --channel "$SELECTED_CHANNEL" --create-draft
