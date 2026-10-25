@@ -1,7 +1,7 @@
-I deliberately broke a K3s readiness probe and recovered it through Flux.
+I broke a K3s readiness probe and recovered it through Flux.
 
-The recovery HTTP capture recorded 1,194 HTTP 200s and 6 consecutive timeouts after the Deployment was healthy.
+The recovery capture recorded 1,194 HTTP 200s and 6 consecutive timeouts after the Deployment was healthy.
 
-Cause unknown; the SSH tunnel/Ingress path is part of the investigation.
+Cause unknown. The SSH tunnel and Ingress are part of the request path.
 
 https://github.com/DavidBenitoCampo/baremetal-platform-lab
