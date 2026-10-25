@@ -1,0 +1,27 @@
+I deliberately broke a Kubernetes deployment to see how it would recover.
+
+I'm running K3s on a Raspberry Pi 5, with Flux managing the application from Git.
+
+For this test, I changed Podinfo's readiness probe to an unused port. The new Pod stayed unready, while the two previous Pods remained Ready. Flux reported a failed health check.
+
+I reverted the change in Git. Eventually both the Deployment and Flux reported a healthy state.
+
+But the HTTP recordings showed something I couldn't explain.
+
+During the failed release, the probe recorded 1,800 HTTP 200 responses and no timeouts.
+
+In the recovery capture, it recorded:
+- 1,194 HTTP 200 responses
+- 6 consecutive timeouts
+
+The timeouts started roughly three minutes after the Deployment had reported recovery.
+
+I don't know yet whether the issue was in the application, Ingress, SSH tunnel, or somewhere else in the request path. The probe ran from my workstation through a tunnel, so a healthy Deployment and a failed HTTP request don't necessarily contradict each other.
+
+Next time I'll keep one uninterrupted capture running across the whole experiment and collect matching Ingress and host logs.
+
+I'm keeping the evidence, including the things I haven't figured out yet:
+
+https://github.com/DavidBenitoCampo/baremetal-platform-lab/blob/main/docs/incidents/2026-10-18-podinfo-failed-release.md
+
+#Kubernetes #GitOps #SRE
