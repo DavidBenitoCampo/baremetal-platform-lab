@@ -62,7 +62,18 @@ have 40.635 seconds between their boundary sample starts.
 
 [Failed release and Git recovery evidence](docs/incidents/2026-10-18-podinfo-failed-release.md)
 
+On 24 October, I triggered a same-version rollout through a Pod template
+annotation and recorded HTTP requests from the workstation and a separate
+in-cluster Job. The rollout completed. The workstation recorded 1,800 HTTP 200
+responses; the internal Service probe recorded 1,799 HTTP 200 responses and one
+HTTP 503 during the rollout. Their p95 attempt latencies were 66.85 ms and
+11.73 ms respectively. The internal failure's cause is unconfirmed. Both logs
+overlap throughout the rollout, and neither contains transport timeouts.
+
+[Paired rollout measurements](docs/evidence/2026-10-24-podinfo-paired-rollout.md)
+
 I have not measured a successful version update with continuous HTTP requests.
+The annotation exercise measures replacement of Pods using the same image.
 
 ### Inference and model persistence
 
