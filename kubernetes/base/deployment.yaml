@@ -22,7 +22,7 @@ spec:
   template:
     metadata:
       annotations:
-        lab.example.com/rollout-test: "2026-10-24-01"
+        lab.example.com/rollout-test: "2026-10-28-01"
       labels:
         app.kubernetes.io/name: podinfo
         app.kubernetes.io/part-of: baremetal-platform-lab
